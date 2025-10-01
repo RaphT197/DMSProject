@@ -17,7 +17,6 @@ public class FFGUI {
     }
 
     private JLabel jobImageLabel;
-        ImageIcon icon = new ImageIcon("src/images/Dragoon.png");
 
     private void initialize() {
 
@@ -50,10 +49,15 @@ public class FFGUI {
         southPanel.add(panel, BorderLayout.CENTER);
 
         jobImageLabel = new JLabel();
-        Image img = icon.getImage().getScaledInstance(64,64,Image.SCALE_SMOOTH);
-        jobImageLabel.setIcon(new ImageIcon(img));
-        //jobImageLabel.setIcon(getRandomJobIcon()); // test image
         southPanel.add(jobImageLabel, BorderLayout.EAST);
+
+        ImageIcon randomIcon = getRandomJobIcon();
+        if (randomIcon != null) {
+            Image img = randomIcon.getImage().getScaledInstance(64, 64, Image.SCALE_SMOOTH);
+            jobImageLabel.setIcon(new ImageIcon(img));
+        }
+
+
 
 
         frame.add(southPanel, BorderLayout.SOUTH);
@@ -97,6 +101,12 @@ public class FFGUI {
             PCharacter pc = new PCharacter("", name, job, level, hp, isActive);
             ff.addCharacter(pc);
             outputArea.append("Added: " + pc + "\n");
+
+            ImageIcon randomIcon = getRandomJobIcon();
+            if (randomIcon != null) {
+                Image img = randomIcon.getImage().getScaledInstance(64, 64, Image.SCALE_SMOOTH);
+                jobImageLabel.setIcon(new ImageIcon(img));
+            }
         } catch (Exception e) { JOptionPane.showMessageDialog(frame, "Error: " + e.getMessage()); }
     }
 
@@ -117,15 +127,26 @@ public class FFGUI {
             outputArea.append("\n--- Characters ---\n");
             for (PCharacter c : chars) outputArea.append(c + "\n");
             outputArea.append("-----------------\n");
+            ImageIcon randomIcon = getRandomJobIcon();
+            if (randomIcon != null) {
+                Image img = randomIcon.getImage().getScaledInstance(64, 64, Image.SCALE_SMOOTH);
+                jobImageLabel.setIcon(new ImageIcon(img));
+            }
         }
 
     }
 
     private void levelUpCharacter() {
-        String id = JOptionPane.showInputDialog(frame, "Character ID:");
-        int inc = Integer.parseInt(JOptionPane.showInputDialog(frame, "Level Increase:"));
-        ff.levelUpById(id, inc);
-        outputArea.append("Leveled up: " + id + "\n");
+        ArrayList<PCharacter> chars = ff.getCharacters();
+        if (chars == null || chars.size() == 0) {
+            JOptionPane.showMessageDialog(frame, "Nothing to LevelUp");
+        } else{
+            String id = JOptionPane.showInputDialog(frame, "Character ID:");
+            int inc = Integer.parseInt(JOptionPane.showInputDialog(frame, "Level Increase:"));
+            ff.levelUpById(id, inc);
+            outputArea.append("Leveled up: " + id + "\n");
+        }
+
     }
 
     private void updateCharacter() {

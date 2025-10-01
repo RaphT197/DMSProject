@@ -2,7 +2,7 @@ package FFPackage;
 
 import java.util.*;
 
-public class PCharacter extends ArrayList<Object> {
+public class PCharacter  {
     private String id;
     private String name;
     private String job;
@@ -62,7 +62,7 @@ public class PCharacter extends ArrayList<Object> {
     public double getHp() { return hp; }
     public boolean isActive() { return isActive; }
 
-    public void setName( String name ) { this.name = normalizeJob(name); }
+    public void setName( String name ) { this.name = name != null ? name.trim() : ""; }
     public void setJob( String job ) { this.job = normalizeJob(job); }
     public void setLevel(int level) { this.level = level; }
     public void setHp(double hp) { this.hp = hp; }
@@ -74,8 +74,5 @@ public class PCharacter extends ArrayList<Object> {
                 id, name, job, level, hp, isActive);
     }
 
-    @Override
-    public List<Object> reversed() {
-        return super.reversed();
-    }
+
 }
