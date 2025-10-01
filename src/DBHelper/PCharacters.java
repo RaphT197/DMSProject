@@ -6,7 +6,7 @@ import java.sql.*;
 import java.util.ArrayList;
 
 public class PCharacters {
-    private final String DATABASE_PATH = "C:\\Users\\phael\\IdeaProjects\\DMSProject\\out\\production\\DMSProject\\ffgame.db";
+    private final String DATABASE_PATH = "C:\\Users\\phael\\IdeaProjects\\DMSProject\\ffgame.db";
     private final String CONNECTION_STRING = "jdbc:sqlite:" + DATABASE_PATH;
 
     public PCharacters() {
@@ -25,7 +25,9 @@ public class PCharacters {
         try (Connection conn = DriverManager.getConnection(CONNECTION_STRING);
              Statement stmt = conn.createStatement()) {
             stmt.execute(sql);
-        } catch (SQLException e) { e.printStackTrace(); }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
     public void insert(String id, String name, String job, int level, double hp, boolean isActive) {
@@ -39,7 +41,9 @@ public class PCharacters {
             pstmt.setDouble(5, hp);
             pstmt.setInt(6, isActive ? 1 : 0);
             pstmt.executeUpdate();
-        } catch (SQLException e) { e.printStackTrace(); }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
     public void update(String field, String value, String whereField, String whereValue) {
@@ -49,7 +53,9 @@ public class PCharacters {
             pstmt.setString(1, value);
             pstmt.setString(2, whereValue);
             pstmt.executeUpdate();
-        } catch (SQLException e) { e.printStackTrace(); }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
     public void delete(String whereField, String whereValue) {
@@ -58,11 +64,14 @@ public class PCharacters {
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setString(1, whereValue);
             pstmt.executeUpdate();
-        } catch (SQLException e) { e.printStackTrace(); }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
-    public ArrayList<ArrayList<Object>> selectAll() {
-        ArrayList<ArrayList<Object>> list = new ArrayList<>();
+    // FIX: Return ArrayList<PCharacter> instead of ArrayList<ArrayList<Object>>
+    public ArrayList<PCharacter> selectAll() {
+        ArrayList<PCharacter> list = new ArrayList<>();
         String sql = "SELECT * FROM characters";
         try (Connection conn = DriverManager.getConnection(CONNECTION_STRING);
              Statement stmt = conn.createStatement();
@@ -79,7 +88,9 @@ public class PCharacters {
                 );
                 list.add(pc);
             }
-        } catch (SQLException e) { e.printStackTrace(); }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
         return list;
     }
 }

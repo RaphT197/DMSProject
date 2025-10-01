@@ -15,7 +15,8 @@ public class FFCLI {
             System.out.println("3. Display all characters");
             System.out.println("4. Level up character");
             System.out.println("5. Remove character");
-            System.out.println("6. Exit");
+            System.out.println("6. Update character");
+            System.out.println("7. Exit");
             System.out.print("Choose: ");
 
             String choice = sc.nextLine();
@@ -25,7 +26,8 @@ public class FFCLI {
                 case "3": display(); break;
                 case "4": levelUp(); break;
                 case "5": remove(); break;
-                case "6": System.exit(0);
+                case "6": update(); break;
+                case "7": System.exit(0);
                 default: System.out.println("Invalid choice!");
             }
         }
@@ -41,7 +43,11 @@ public class FFCLI {
             }
             System.out.print("Level: "); int level = Integer.parseInt(sc.nextLine().trim());
             System.out.print("HP: "); double hp = Double.parseDouble(sc.nextLine().trim());
-            System.out.print("Active (true/false): "); boolean active = Boolean.parseBoolean(sc.nextLine().trim());
+            System.out.print("Is the character in your party? (yes/no):"); String isActive = sc.nextLine();
+            if (!isActive.equalsIgnoreCase("yes") && !isActive.equalsIgnoreCase("no")) {
+                throw new IllegalArgumentException("\nActive must be 'yes' or 'no'");
+            }
+            boolean active = Boolean.parseBoolean(isActive);
             ff.addCharacter(new PCharacter("", name, job, level, hp, active));
             System.out.println("Character added!");
         } catch (Exception e) { System.out.println("Error: " + e.getMessage()); }
@@ -67,9 +73,20 @@ public class FFCLI {
         System.out.println("Character leveled up.");
     }
 
+    public static void update() {
+        System.out.print("Enter Character ID: "); String id = sc.nextLine().trim();
+        ff.updateCharacterById(id);
+    }
+
     private static void remove() {
-        System.out.print("Enter Character ID to remove: "); String id = sc.nextLine().trim();
-        ff.removeCharacterById(id);
-        System.out.println("Character removed.");
+        if (ff.getCharacters().isEmpty()) {
+            System.out.println("\nNo characters to remove!");
+        }
+        else {
+            System.out.print("Enter Character ID to remove: "); String id = sc.nextLine().trim();
+            ff.removeCharacterById(id);
+            System.out.println("Character removed.");
+        }
+
     }
 }

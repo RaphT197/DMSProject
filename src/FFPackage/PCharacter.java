@@ -62,6 +62,8 @@ public class PCharacter extends ArrayList<Object> {
     public double getHp() { return hp; }
     public boolean isActive() { return isActive; }
 
+    public void setName( String name ) { this.name = normalizeJob(name); }
+    public void setJob( String job ) { this.job = normalizeJob(job); }
     public void setLevel(int level) { this.level = level; }
     public void setHp(double hp) { this.hp = hp; }
     public void setActive(boolean active) { this.isActive = active; }

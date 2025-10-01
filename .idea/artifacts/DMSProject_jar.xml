@@ -1,0 +1,9 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="DMSProject:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/DMSProject_jar</output-path>
+    <root id="archive" name="DMSProject.jar">
+      <element id="module-output" name="DMSProject" />
+      <element id="extracted-dir" path="$USER_HOME$/Downloads/sqlite-3.40.1/sqlite-jdbc-3.40.1.0.jar" path-in-jar="/" />
+    </root>
+  </artifact>
+</component>
