@@ -1,7 +1,5 @@
 package FFPackage;
 
-import java.util.Scanner;
-
 public class Main {
     public static void main(String[] args) {
         System.out.println("Choose mode: 1 = CLI, 2 = GUI");

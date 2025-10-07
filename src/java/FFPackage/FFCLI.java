@@ -47,7 +47,7 @@ public class FFCLI {
             if (!isActive.equalsIgnoreCase("yes") && !isActive.equalsIgnoreCase("no")) {
                 throw new IllegalArgumentException("\nActive must be 'yes' or 'no'");
             }
-            boolean active = Boolean.parseBoolean(isActive);
+            boolean active = isActive.equalsIgnoreCase("yes");
             ff.addCharacter(new PCharacter("", name, job, level, hp, active));
             System.out.println("Character added!");
         } catch (Exception e) { System.out.println("Error: " + e.getMessage()); }
@@ -70,7 +70,6 @@ public class FFCLI {
         System.out.print("Enter Character ID: "); String id = sc.nextLine().trim();
         System.out.print("Enter levels to increase: "); int inc = Integer.parseInt(sc.nextLine().trim());
         ff.levelUpById(id, inc);
-        System.out.println("Character leveled up.");
     }
 
     public static void update() {
@@ -87,6 +86,5 @@ public class FFCLI {
             ff.removeCharacterById(id);
             System.out.println("Character removed.");
         }
-
     }
 }

@@ -14,6 +14,7 @@ public class FF {
     private final int MAX_LEVEL = 99;
     private final int MIN_LEVEL = 1;
 
+
     // Constructor: load characters from DB
     public FF() {
         ArrayList<PCharacter> rows = db.selectAll();
@@ -33,21 +34,25 @@ public class FF {
 
     // Level up by ID
     public void levelUpById(String id, int increment) {
-        for (PCharacter c : character) {
-            if (c.getId().equals(id)) {
-                int newLevel = c.getLevel() + increment;
-                if (newLevel > MAX_LEVEL) newLevel = MAX_LEVEL;
-                if (newLevel < MIN_LEVEL) newLevel = MIN_LEVEL;
-                c.setLevel(newLevel);
 
-                // Increase HP randomly between 0–9999
-                c.setHp(c.getHp() + new Random().nextInt(10000));
+            for (PCharacter c : character) {
+                if (c.getId().equals(id)) {
+                    int newLevel = c.getLevel() + increment;
+                    if (newLevel > MAX_LEVEL) newLevel = MAX_LEVEL;
+                    if (newLevel < MIN_LEVEL) newLevel = MIN_LEVEL;
+                    c.setLevel(newLevel);
+                    System.out.println("Character leveled up! " + c.getName() + " is level " + c.getLevel());
+                    // Increase HP randomly between 0–9999
+                    c.setHp(c.getHp() + new Random().nextInt(10000));
 
-                // Update DB
-                db.update("level", String.valueOf(c.getLevel()), "id", id);
-                db.update("hp", String.valueOf(c.getHp()), "id", id);
+                    // Update DB
+                    db.update("level", String.valueOf(c.getLevel()), "id", id);
+                    db.update("hp", String.valueOf(c.getHp()), "id", id);
+                }
+                else {
+                    System.out.println("No Character Found");
+                }
             }
-        }
     }
 
     // Remove by ID
