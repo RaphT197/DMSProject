@@ -19,7 +19,7 @@ public class FFGUI {
     private void initialize() {
         frame = new JFrame("FF Character Manager");
 
-        // Load icon using getResource (JAR-compatible)
+        // load icon using getResource
         java.net.URL appIconURL = getClass().getResource("/images/app_icon.png");
         if (appIconURL != null) {
             frame.setIconImage(new ImageIcon(appIconURL).getImage());
@@ -44,6 +44,7 @@ public class FFGUI {
         JButton remove = new JButton("Remove");
         JButton exit = new JButton("Exit");
 
+        //giving function to every button instantiated
         panel.add(addManual);
         panel.add(addFile);
         panel.add(display);
@@ -55,13 +56,14 @@ public class FFGUI {
         JPanel southPanel = new JPanel(new BorderLayout());
         southPanel.add(panel, BorderLayout.CENTER);
 
+        //creates a space for the random job images
         jobImageLabel = new JLabel();
         southPanel.add(jobImageLabel, BorderLayout.EAST);
         updateRandomJobIcon();
 
         frame.add(southPanel, BorderLayout.SOUTH);
 
-        // Event listeners
+        // event listeners
         addManual.addActionListener(e -> addCharacterManual());
         addFile.addActionListener(e -> addCharacterFromFile());
         display.addActionListener(e -> displayCharacters());
@@ -73,6 +75,7 @@ public class FFGUI {
         frame.setVisible(true);
     }
 
+    //function to rotate the job images from the images folder
     private void updateRandomJobIcon() {
         ImageIcon randomIcon = getRandomJobIcon();
         if (randomIcon != null) {
@@ -81,7 +84,7 @@ public class FFGUI {
         }
     }
 
-    // Random job icon method - FIXED for JAR compatibility
+    // random job icon method
     private ImageIcon getRandomJobIcon() {
         String[] jobImageNames = {
                 "astrologian.png", "bard.png", "black_mage.png", "dark_knight.png",
@@ -91,7 +94,7 @@ public class FFGUI {
 
         String name = jobImageNames[new Random().nextInt(jobImageNames.length)];
 
-        // Use getResource for JAR compatibility
+
         java.net.URL url = getClass().getResource("/images/" + name);
 
         if (url == null) {
@@ -102,6 +105,7 @@ public class FFGUI {
         return new ImageIcon(url);
     }
 
+    //manually adds characters from the users input
     private void addCharacterManual() {
         try {
             String name = JOptionPane.showInputDialog(frame, "Name:").trim();
@@ -125,6 +129,7 @@ public class FFGUI {
         }
     }
 
+        // add characters from a .txt file
     private void addCharacterFromFile() {
         JFileChooser chooser = new JFileChooser();
         if (chooser.showOpenDialog(frame) == JFileChooser.APPROVE_OPTION) {
@@ -133,6 +138,7 @@ public class FFGUI {
         }
     }
 
+    //display all DB characters
     private void displayCharacters() {
         ArrayList<PCharacter> chars = ff.getCharacters();
         if (chars.isEmpty()) {
@@ -145,6 +151,7 @@ public class FFGUI {
         }
     }
 
+    //lvlup characters by their ID
     private void levelUpCharacter() {
         ArrayList<PCharacter> chars = ff.getCharacters();
         if (chars.isEmpty()) {
@@ -158,12 +165,20 @@ public class FFGUI {
         }
     }
 
+        //update a character by ID
     private void updateCharacter() {
-        String id = JOptionPane.showInputDialog(frame, "Character ID:");
-        ff.updateCharacterById(id);
-        outputArea.append("Updated: " + id + " \n");
+        ArrayList<PCharacter> chars = ff.getCharacters();
+        if (chars.isEmpty()) {
+            JOptionPane.showMessageDialog(frame, "Nothing to update.");
+        }
+        else {
+            String id = JOptionPane.showInputDialog(frame, "Character ID:");
+            ff.updateCharacterById(id);
+            outputArea.append("Updated: " + id + " \n");
+        }
     }
 
+    //remove characters by ID
     private void removeCharacter() {
         if (ff.getCharacters().isEmpty()) {
             JOptionPane.showMessageDialog(frame, "No characters to remove.");
@@ -174,6 +189,7 @@ public class FFGUI {
         }
     }
 
+    //starts the GUI
     public static void main(String[] args) {
         SwingUtilities.invokeLater(FFGUI::new);
     }

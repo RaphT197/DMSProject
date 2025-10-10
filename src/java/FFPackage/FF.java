@@ -24,7 +24,7 @@ public class FF {
     }
 
 
-    // Add a character manually or programmatically
+    // add a character manually
     public void addCharacter(PCharacter pc) {
         character.add(pc);
         db.insert(pc.getId(), pc.getName(), pc.getJob(), pc.getLevel(), pc.getHp(), pc.isActive());
@@ -32,7 +32,7 @@ public class FF {
 
     public ArrayList<PCharacter> getCharacters() { return character; }
 
-    // Level up by ID
+    // level up by ID
     public void levelUpById(String id, int increment) {
 
             for (PCharacter c : character) {
@@ -55,33 +55,35 @@ public class FF {
             }
     }
 
-    // Remove by ID
+    // remove by ID
     public void removeCharacterById(String id) {
         character.removeIf(c -> c.getId().equals(id));
         db.delete("id", id);
     }
 
     public void updateCharacterById(String id) {
-        Scanner sc = new Scanner(System.in);  // create scanner once
-        String options = """
-            1. Change name
-            2. Change job
-            3. Change level
-            4. Change hp
-            5. Exit
-            """;
 
-        // Find the character first
-        PCharacter c = null;
-        for (PCharacter pc : character) {
-            if (pc.getId().equals(id)) {
-                c = pc;
-                break;
+            Scanner sc = new Scanner(System.in);  // create scanner once
+            String options = """
+                    1. Change name
+                    2. Change job
+                    3. Change level
+                    4. Change hp
+                    5. Exit
+                    """;
+
+            // Find the character first
+            PCharacter c = null;
+            for (PCharacter pc : character) {
+                if (pc.getId().equals(id)) {
+                    c = pc;
+                    break;
+                }
             }
-        }
-        if (c == null) {
-            System.out.println("Character not found with ID: " + id);
-            return;
+            if (c == null) {
+                System.out.println("Character not found with ID: " + id);
+                return;
+
         }
 
         boolean updating = true;
@@ -140,7 +142,7 @@ public class FF {
     }
 
 
-    // Add characters from a CSV file
+    // Add characters from a txt file
     public void addCharactersFromFile(String filename) {
         try (Scanner fileScanner = new Scanner(new File(filename))) {
             while (fileScanner.hasNextLine()) {
