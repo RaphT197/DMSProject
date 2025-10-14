@@ -1,5 +1,4 @@
 package FFPackage;
-
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Scanner;
@@ -77,19 +76,51 @@ public class FFCLI {
 
     //allows users to levelup a character by their character ID
     private static void levelUp() {
+        int maxDigit = 4;
+        boolean active = true;
         ArrayList<PCharacter> characters = ff.getCharacters();
-        if (characters.isEmpty()) {
-            System.out.println("No characters in the file!");
-            return;
-        }
-        else {
-            System.out.print("Enter Character ID: ");
-            String id = sc.nextLine().trim();
-            System.out.print("Enter levels to increase: ");
-            int inc = Integer.parseInt(sc.nextLine().trim());
-            ff.levelUpById(id, inc);
+
+        while (active) {
+            if (characters.isEmpty()) {
+                System.out.println("No characters in the database!");
+                active = false;
+            }
+            else {
+                System.out.print("Enter your Character's ID: ");
+                System.out.print("or press E to return to main menu ");
+                String id = sc.nextLine().trim();
+                if (id.length() > maxDigit || id.isEmpty()) {
+                    System.out.println("Invalid character id!");
+                    active = false;
+                }
+                else if (id.equalsIgnoreCase("e")){
+                    break;
+                }
+                try {
+                    System.out.println("Enter levels to level up! ");
+                    int level = Integer.parseInt(sc.nextLine().trim());
+                    ff.levelUpById(id, level);
+                    active = false;
+                } catch (NumberFormatException e) {
+                    System.out.println("Invalid level!");
+                }
+            }
         }
     }
+
+//        ArrayList<PCharacter> characters = ff.getCharacters();
+//        if (characters.isEmpty()) {
+//            System.out.println("No characters in the file!");
+//            return;
+//        }
+//        else {
+//            System.out.print("Enter Character ID: ");
+//            String id = sc.nextLine().trim();
+//            System.out.print("Enter levels to increase: ");
+//            int inc = Integer.parseInt(sc.nextLine().trim());
+//            ff.levelUpById(id, inc);
+//        }
+//    }
 
     //allows users to update a specific character by entering the ID and what they want to update
     public static void update() {

@@ -166,6 +166,8 @@ public class FFGUI {
     }
 
         //update a character by ID
+    // TODO THE BUTTONS WONT ADD THEMSELVES ALONE :)
+    //
     private void updateCharacter() {
         ArrayList<PCharacter> chars = ff.getCharacters();
         if (chars.isEmpty()) {

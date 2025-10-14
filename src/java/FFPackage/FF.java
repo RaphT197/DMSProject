@@ -9,8 +9,8 @@ import java.util.Random;
 import java.util.Scanner;
 
 public class FF {
-    private ArrayList<PCharacter> character = new ArrayList<>();
-    private PCharacters db = new PCharacters();
+    private final ArrayList<PCharacter> character = new ArrayList<>();
+    private final PCharacters db = new PCharacters();
     private final int MAX_LEVEL = 99;
     private final int MIN_LEVEL = 1;
 
@@ -35,8 +35,11 @@ public class FF {
     // level up by ID
     public void levelUpById(String id, int increment) {
 
+        boolean found = false;
+
             for (PCharacter c : character) {
                 if (c.getId().equals(id)) {
+                    found = true;
                     int newLevel = c.getLevel() + increment;
                     if (newLevel > MAX_LEVEL) newLevel = MAX_LEVEL;
                     if (newLevel < MIN_LEVEL) newLevel = MIN_LEVEL;
@@ -48,10 +51,12 @@ public class FF {
                     // Update DB
                     db.update("level", String.valueOf(c.getLevel()), "id", id);
                     db.update("hp", String.valueOf(c.getHp()), "id", id);
+                    break;
                 }
-                else {
-                    System.out.println("No Character Found");
-                }
+            }
+
+            if (!found) {
+                System.out.print("No character found with id " + id);
             }
     }
 
