@@ -7,6 +7,7 @@ public class FFCLI {
     private static final Scanner sc = new Scanner(System.in);
     private static final FF ff = new FF();
 
+
     //menu for the CLI
     public static void main(String[] args) {
         while (true) {
@@ -76,6 +77,7 @@ public class FFCLI {
 
     //allows users to levelup a character by their character ID
     private static void levelUp() {
+
         int maxDigit = 4;
         boolean active = true;
         ArrayList<PCharacter> characters = ff.getCharacters();
@@ -84,18 +86,27 @@ public class FFCLI {
             if (characters.isEmpty()) {
                 System.out.println("No characters in the database!");
                 active = false;
+
             }
             else {
                 System.out.print("Enter your Character's ID: ");
                 System.out.print("or press E to return to main menu ");
                 String id = sc.nextLine().trim();
-                if (id.length() > maxDigit || id.isEmpty()) {
-                    System.out.println("Invalid character id!");
-                    active = false;
-                }
-                else if (id.equalsIgnoreCase("e")){
+
+                if (id.equalsIgnoreCase("e")){
                     break;
                 }
+
+                if (id.length() > maxDigit || id.isEmpty()) {
+                    System.out.println("Invalid character id!");
+                    continue;
+                }
+
+                if (!ff.characterExists(id)) {
+                    System.out.println("Character does not exist!");
+                    continue;
+                }
+
                 try {
                     System.out.println("Enter levels to level up! ");
                     int level = Integer.parseInt(sc.nextLine().trim());
@@ -103,45 +114,59 @@ public class FFCLI {
                     active = false;
                 } catch (NumberFormatException e) {
                     System.out.println("Invalid level!");
+                    continue;
                 }
             }
         }
     }
 
-//        ArrayList<PCharacter> characters = ff.getCharacters();
-//        if (characters.isEmpty()) {
-//            System.out.println("No characters in the file!");
-//            return;
-//        }
-//        else {
-//            System.out.print("Enter Character ID: ");
-//            String id = sc.nextLine().trim();
-//            System.out.print("Enter levels to increase: ");
-//            int inc = Integer.parseInt(sc.nextLine().trim());
-//            ff.levelUpById(id, inc);
-//        }
-//    }
 
     //allows users to update a specific character by entering the ID and what they want to update
     public static void update() {
         ArrayList<PCharacter> characters = ff.getCharacters();
-        if (characters.isEmpty()) { System.out.println("No characters to update!"); return;}
-        else {
-            System.out.print("Enter Character ID: ");
-            String id = sc.nextLine().trim();
-            ff.updateCharacterById(id);
+        if (characters.isEmpty()) {
+            System.out.println("No characters to update!");
+            return;
         }
+
+        boolean searching = true;
+
+        while (searching) {
+            System.out.print("Enter character ID or E to exit: ");
+            String id = sc.nextLine().trim();
+
+            if(id.equalsIgnoreCase("e")){
+                break;
+            }
+            if (!ff.characterExists(id)) {
+                System.out.println("Character not found!");
+                continue;
+            }
+
+            ff.updateCharacterById(id);
+            searching = false;
+        }
+
     }
 
     //removes character by ID
     private static void remove() {
+        boolean searching = true;
         if (ff.getCharacters().isEmpty()) {
             System.out.println("\nNo characters to remove!");
         }
-        else {
+
+        while(searching){
             System.out.print("Enter Character ID to remove: "); String id = sc.nextLine().trim();
-            ff.removeCharacterById(id);
+
+            if (!ff.characterExists(id)) {
+                System.out.println("Character not found!");
+                continue;
+            }
             System.out.println("Character removed.");
+            ff.removeCharacterById(id);
+            searching = false;
         }
     }
+
 }

@@ -1,5 +1,6 @@
 package FFPackage;
 
+import java.sql.*;
 import java.util.*;
 
 public class PCharacter  {
@@ -67,6 +68,9 @@ public class PCharacter  {
     public void setLevel(int level) { this.level = level; }
     public void setHp(double hp) { this.hp = hp; }
     public void setActive(boolean active) { this.isActive = active; }
+
+
+
 
     @Override
     public String toString() {

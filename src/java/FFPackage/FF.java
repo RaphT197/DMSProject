@@ -17,52 +17,43 @@ public class FF {
 
     // Constructor: load characters from DB
     public FF() {
-        ArrayList<PCharacter> rows = db.selectAll();
-        for (PCharacter pc : rows) {
-            character.add(pc);
-        }
+
+
     }
 
 
     // add a character manually
     public void addCharacter(PCharacter pc) {
-        character.add(pc);
         db.insert(pc.getId(), pc.getName(), pc.getJob(), pc.getLevel(), pc.getHp(), pc.isActive());
     }
 
-    public ArrayList<PCharacter> getCharacters() { return character; }
+    public ArrayList<PCharacter> getCharacters() { return db.selectAll(); }
 
     // level up by ID
     public void levelUpById(String id, int increment) {
 
-        boolean found = false;
+        PCharacter c = db.selectById(id);
 
-            for (PCharacter c : character) {
-                if (c.getId().equals(id)) {
-                    found = true;
-                    int newLevel = c.getLevel() + increment;
-                    if (newLevel > MAX_LEVEL) newLevel = MAX_LEVEL;
-                    if (newLevel < MIN_LEVEL) newLevel = MIN_LEVEL;
-                    c.setLevel(newLevel);
-                    System.out.println("Character leveled up! " + c.getName() + " is level " + c.getLevel());
-                    // Increase HP randomly between 0–9999
-                    c.setHp(c.getHp() + new Random().nextInt(10000));
+        if (c == null) {
+            System.out.println("Character not found!");
+            return;
+        }
 
-                    // Update DB
-                    db.update("level", String.valueOf(c.getLevel()), "id", id);
-                    db.update("hp", String.valueOf(c.getHp()), "id", id);
-                    break;
-                }
-            }
+        int newLevel = c.getLevel() + increment;
+        if (newLevel > MAX_LEVEL) newLevel = MAX_LEVEL;
+        if (newLevel < MIN_LEVEL) newLevel = MIN_LEVEL;
 
-            if (!found) {
-                System.out.print("No character found with id " + id);
-            }
+        double newHp = c.getHp() + new Random().nextInt(500);
+
+        db.update("level", String.valueOf(c.getLevel()), "id", id);
+        db.update("hp", String.valueOf(c.getHp()), "id", id);
+
+        System.out.println("Character leveled up! " + c.getName() + " is level " + newLevel);
+
     }
 
     // remove by ID
     public void removeCharacterById(String id) {
-        character.removeIf(c -> c.getId().equals(id));
         db.delete("id", id);
     }
 
@@ -77,19 +68,9 @@ public class FF {
                     5. Exit
                     """;
 
-            // Find the character first
-            PCharacter c = null;
-            for (PCharacter pc : character) {
-                if (pc.getId().equals(id)) {
-                    c = pc;
-                    break;
-                }
-            }
-            if (c == null) {
-                System.out.println("Character not found with ID: " + id);
-                return;
 
-        }
+            PCharacter c = db.selectById(id);
+
 
         boolean updating = true;
         while (updating) {
@@ -103,16 +84,18 @@ public class FF {
                     String newName = sc.nextLine();
                     c.setName(newName);
                     db.update("name", newName, "id", id);
+                    System.out.println("Character's name has been updated to: " + c.getName());
                     break;
                 case "2":
                     System.out.print("Enter new job: ");
                     String newJob = sc.nextLine();
                     if (!PCharacter.isValidJob(newJob)) {
                         System.out.println("Invalid job!");
-                        break;
+                        continue;
                     }
                     c.setJob(newJob);
                     db.update("job", newJob, "id", id);
+                    System.out.println("Character's job has been updated to: " + c.getJob());
                     break;
                 case "3":
                     System.out.print("Enter new level: ");
@@ -122,8 +105,10 @@ public class FF {
                         if (newLevel > MAX_LEVEL) newLevel = MAX_LEVEL;
                         c.setLevel(newLevel);
                         db.update("level", String.valueOf(newLevel), "id", id);
+                        System.out.println("Character's level has been updated to: " + c.getLevel());
                     } catch (NumberFormatException e) {
                         System.out.println("Invalid number!");
+                        continue;
                     }
                     break;
                 case "4":
@@ -132,8 +117,10 @@ public class FF {
                         double newHp = Double.parseDouble(sc.nextLine());
                         c.setHp(newHp);
                         db.update("hp", String.valueOf(newHp), "id", id);
+                        System.out.println("Character's hp has been updated to: " + c.getHp());
                     } catch (NumberFormatException e) {
                         System.out.println("Invalid number!");
+                        continue;
                     }
                     break;
                 case "5":
@@ -142,6 +129,7 @@ public class FF {
                     break;
                 default:
                     System.out.println("Invalid choice. Try again.");
+                    continue;
             }
         }
     }
@@ -188,4 +176,11 @@ public class FF {
             System.out.println("File not found: " + filename);
         }
     }
+
+    //check characters existence within the db
+    public boolean characterExists(String id) {
+        return db.idExists(id); // checks db
+    }
+
+
 }

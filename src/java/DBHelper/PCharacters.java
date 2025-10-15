@@ -1,7 +1,5 @@
 package DBHelper;
-
 import FFPackage.PCharacter;
-
 import java.sql.*;
 import java.util.ArrayList;
 
@@ -69,7 +67,54 @@ public class PCharacters {
         }
     }
 
-    // FIX: Return ArrayList<PCharacter> instead of ArrayList<ArrayList<Object>>
+    public boolean idExists(String id) {
+        String sql = "SELECT id FROM characters WHERE id = ?";
+
+        try (Connection conn = DriverManager.getConnection(CONNECTION_STRING);
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            pstmt.setString(1, id);
+
+            try (ResultSet rs = pstmt.executeQuery()) {
+                return rs.next();
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return false;
+    }
+
+    public PCharacter selectById(String id) {
+        String sql = "SELECT * FROM characters WHERE id = ?";
+
+        try (Connection conn = DriverManager.getConnection(CONNECTION_STRING);
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            pstmt.setString(1, id);
+
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) {
+
+                    return new PCharacter(
+                            rs.getString("id"),
+                            rs.getString("name"),
+                            rs.getString("job"),
+                            rs.getInt("level"),
+                            rs.getDouble("hp"),
+                            rs.getInt("isActive") == 1
+                    );
+                }
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+
     public ArrayList<PCharacter> selectAll() {
         ArrayList<PCharacter> list = new ArrayList<>();
         String sql = "SELECT * FROM characters";
