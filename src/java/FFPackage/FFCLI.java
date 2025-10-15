@@ -114,7 +114,6 @@ public class FFCLI {
                     active = false;
                 } catch (NumberFormatException e) {
                     System.out.println("Invalid level!");
-                    continue;
                 }
             }
         }
@@ -154,11 +153,16 @@ public class FFCLI {
         boolean searching = true;
         if (ff.getCharacters().isEmpty()) {
             System.out.println("\nNo characters to remove!");
+            return;
+
         }
 
         while(searching){
-            System.out.print("Enter Character ID to remove: "); String id = sc.nextLine().trim();
+            System.out.print("Enter Character ID to remove or press E to exit: "); String id = sc.nextLine().trim();
 
+            if(id.equalsIgnoreCase("e")){
+                searching = false;
+            }
             if (!ff.characterExists(id)) {
                 System.out.println("Character not found!");
                 continue;

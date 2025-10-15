@@ -153,8 +153,8 @@ public class FFGUI {
 
     //lvlup characters by their ID
     private void levelUpCharacter() {
-        ArrayList<PCharacter> chars = ff.getCharacters();
-        if (chars.isEmpty()) {
+
+        if (ff.getCharacters().isEmpty()) {
             JOptionPane.showMessageDialog(frame, "Nothing to level up.");
         } else {
             String id = JOptionPane.showInputDialog(frame, "Character ID:");
@@ -166,28 +166,130 @@ public class FFGUI {
     }
 
         //update a character by ID
-    // TODO THE BUTTONS WONT ADD THEMSELVES ALONE :)
-    //
-    private void updateCharacter() {
-        ArrayList<PCharacter> chars = ff.getCharacters();
-        if (chars.isEmpty()) {
-            JOptionPane.showMessageDialog(frame, "Nothing to update.");
-        }
-        else {
+        private void updateCharacter() {
             String id = JOptionPane.showInputDialog(frame, "Character ID:");
-            ff.updateCharacterById(id);
-            outputArea.append("Updated: " + id + " \n");
+
+            if (id == null || id.trim().isEmpty()) {
+                return;  // User cancelled
+            }
+
+            if (!ff.characterExists(id)) {
+                JOptionPane.showMessageDialog(frame, "Character does not exist.");
+                updateRandomJobIcon();
+                return;
+            }
+
+            String[] options = {"Name", "Job", "Level", "HP", "Cancel"};
+            boolean updating = true;
+
+            while (updating) {
+                int choice = JOptionPane.showOptionDialog(
+                        frame,  // ← Parent component
+                        "What would you like to update?",
+                        "Update Character",
+                        JOptionPane.DEFAULT_OPTION,
+                        JOptionPane.QUESTION_MESSAGE,
+                        null,
+                        options,
+                        options[0]
+                );
+
+                switch (choice) {
+                    case 0: // Name
+                        String newName = JOptionPane.showInputDialog(frame, "New name:");
+                        if (newName != null && !newName.trim().isEmpty()) {
+                            ff.updateCharacterName(id, newName);
+                            outputArea.append("\n--- Character Name Updated! ---\n");
+                            updateRandomJobIcon();
+                        }
+                        break;
+
+                    case 1: // Job
+                        String newJob = JOptionPane.showInputDialog(frame, "New job:");
+                        if (newJob != null && !newJob.trim().isEmpty()) {
+                            try {
+                                ff.updateCharacterJob(id, newJob);
+                                outputArea.append("\n--- Character Job Updated! ---\n");
+                                updateRandomJobIcon();
+                            } catch (IllegalArgumentException e) {
+                                JOptionPane.showMessageDialog(frame, "Invalid Job: " + e.getMessage());
+                            }
+                        }
+                        break;
+
+                    case 2: // Level
+                        String levelStr = JOptionPane.showInputDialog(frame, "New level (1-99):");
+                        if (levelStr != null) {
+                            try {
+                                int newLevel = Integer.parseInt(levelStr.trim());
+                                ff.updateCharacterLevel(id, newLevel);
+                                outputArea.append("\n--- Character Level Updated! ---\n");
+                                updateRandomJobIcon();
+                            } catch (NumberFormatException e) {
+                                JOptionPane.showMessageDialog(frame, "Invalid number!");
+                            }
+                        }
+                        break;
+
+                    case 3: // HP
+                        String hpStr = JOptionPane.showInputDialog(frame, "New HP:");
+                        if (hpStr != null) {
+                            try {
+                                double newHp = Double.parseDouble(hpStr.trim());
+                                ff.updateCharacterHp(id, newHp);
+                                outputArea.append("\n--- Character HP Updated! ---\n");
+                                updateRandomJobIcon();
+                            } catch (NumberFormatException e) {
+                                JOptionPane.showMessageDialog(frame, "Invalid number!");
+                            }
+                        }
+                        break;
+
+                    case 4: // Cancel
+                    case JOptionPane.CLOSED_OPTION: // User closed dialog
+                        updating = false;
+                        updateRandomJobIcon();
+                        break;
+                }
+            }
         }
-    }
 
     //remove characters by ID
     private void removeCharacter() {
+        boolean searching = true;
+
         if (ff.getCharacters().isEmpty()) {
             JOptionPane.showMessageDialog(frame, "No characters to remove.");
-        } else {
+            return;
+        }
+
+        while(searching) {
             String id = JOptionPane.showInputDialog(frame, "Character ID to remove:");
-            ff.removeCharacterById(id);
-            outputArea.append("Removed: " + id + "\n");
+
+            if(id == null) {
+                searching = false;
+                break;
+            }
+
+            if (!ff.characterExists(id)) {
+                JOptionPane.showMessageDialog(frame, "Character does not exist");
+                continue;
+            }
+
+            int confirm = JOptionPane.showConfirmDialog(
+                    frame,
+                    "Are you sure you want to remove character ID" + id + "?",
+                    "Confirm deletion",
+                    JOptionPane.YES_NO_OPTION
+            );
+
+            if(confirm == JOptionPane.YES_OPTION) {
+                ff.removeCharacterById(id);
+                outputArea.append("Removed: " + id + "\n");
+            }
+
+            searching = false;
+
         }
     }
 

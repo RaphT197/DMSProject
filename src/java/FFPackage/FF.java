@@ -9,7 +9,6 @@ import java.util.Random;
 import java.util.Scanner;
 
 public class FF {
-    private final ArrayList<PCharacter> character = new ArrayList<>();
     private final PCharacters db = new PCharacters();
     private final int MAX_LEVEL = 99;
     private final int MIN_LEVEL = 1;
@@ -45,8 +44,8 @@ public class FF {
 
         double newHp = c.getHp() + new Random().nextInt(500);
 
-        db.update("level", String.valueOf(c.getLevel()), "id", id);
-        db.update("hp", String.valueOf(c.getHp()), "id", id);
+        db.update("level", String.valueOf(newLevel), "id", id);
+        db.update("hp", String.valueOf(newHp), "id", id);
 
         System.out.println("Character leveled up! " + c.getName() + " is level " + newLevel);
 
@@ -180,6 +179,29 @@ public class FF {
     //check characters existence within the db
     public boolean characterExists(String id) {
         return db.idExists(id); // checks db
+    }
+
+    public void updateCharacterName(String id, String newName) {
+        db.update("name", newName, "id", id);  // SET name=newName WHERE id=id
+    }
+
+    public void updateCharacterJob(String id, String newJob) {
+        if (!PCharacter.isValidJob(newJob)) {
+            throw new IllegalArgumentException("Invalid job: " + newJob);
+        }
+        db.update("job", newJob, "id", id);  // SET job=newJob WHERE id=id
+    }
+
+    public void updateCharacterLevel(String id, int newLevel) {
+        // Clamp level
+        if (newLevel < MIN_LEVEL) newLevel = MIN_LEVEL;
+        if (newLevel > MAX_LEVEL) newLevel = MAX_LEVEL;
+
+        db.update("level", String.valueOf(newLevel), "id", id);
+    }
+
+    public void updateCharacterHp(String id, double newHp) {
+        db.update("hp", String.valueOf(newHp), "id", id);
     }
 
 
