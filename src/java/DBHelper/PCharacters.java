@@ -1,14 +1,22 @@
 package DBHelper;
+
 import FFPackage.PCharacter;
 import java.sql.*;
 import java.util.ArrayList;
 
 public class PCharacters {
-    private final String DATABASE_PATH = "C:\\Users\\phael\\IdeaProjects\\DMSProject\\ffgame.db";
-    private final String CONNECTION_STRING = "jdbc:sqlite:" + DATABASE_PATH;
+    private final String CONNECTION_STRING;
 
     public PCharacters() {
-        // Create table if not exists
+        this("C:\\Users\\phael\\IdeaProjects\\DMSProject\\test_ffgame.db");
+    }
+
+    public PCharacters(String databasePath) {
+        this.CONNECTION_STRING = "jdbc:sqlite:" + databasePath;
+        initializeDatabase();
+    }
+
+    public void initializeDatabase() {
         String sql = "CREATE TABLE IF NOT EXISTS characters (" +
                 "id TEXT PRIMARY KEY, " +
                 "name TEXT NOT NULL, " +
@@ -29,6 +37,8 @@ public class PCharacters {
     }
 
     public void insert(String id, String name, String job, int level, double hp, boolean isActive) {
+
+
         String sql = "INSERT INTO characters (id,name,job,level,hp,isActive) VALUES (?,?,?,?,?,?)";
         try (Connection conn = DriverManager.getConnection(CONNECTION_STRING);
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
@@ -39,8 +49,10 @@ public class PCharacters {
             pstmt.setDouble(5, hp);
             pstmt.setInt(6, isActive ? 1 : 0);
             pstmt.executeUpdate();
+
         } catch (SQLException e) {
             e.printStackTrace();
+            throw new RuntimeException("Failed to insert character: " + e.getMessage());
         }
     }
 
@@ -53,6 +65,7 @@ public class PCharacters {
             pstmt.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
+
         }
     }
 
@@ -96,7 +109,6 @@ public class PCharacters {
 
             try (ResultSet rs = pstmt.executeQuery()) {
                 if (rs.next()) {
-
                     return new PCharacter(
                             rs.getString("id"),
                             rs.getString("name"),
@@ -113,7 +125,6 @@ public class PCharacters {
         }
         return null;
     }
-
 
     public ArrayList<PCharacter> selectAll() {
         ArrayList<PCharacter> list = new ArrayList<>();
@@ -138,4 +149,34 @@ public class PCharacters {
         }
         return list;
     }
+
+    public void printById(String id) {
+        String sql = "SELECT * FROM characters WHERE id = ?";
+
+        try (Connection conn = DriverManager.getConnection(CONNECTION_STRING);
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            pstmt.setString(1, id);
+
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) {
+                    System.out.println(new PCharacter(
+                            rs.getString("id"),
+                            rs.getString("name"),
+                            rs.getString("job"),
+                            rs.getInt("level"),
+                            rs.getDouble("hp"),
+                            rs.getInt("isActive") == 1
+                    ));
+                }
+
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+
+
 }

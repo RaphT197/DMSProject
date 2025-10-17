@@ -1,4 +1,6 @@
 package FFPackage;
+import DBHelper.PCharacters;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Scanner;
@@ -37,23 +39,25 @@ public class FFCLI {
 
     // user can manually enter a character
     private static void addManual() {
-        try {
-            System.out.print("Name: "); String name = sc.nextLine().trim();
-            System.out.print("Job: "); String job = sc.nextLine().trim();
-            if (!PCharacter.isValidJob(job)) {
-                System.out.println("Invalid job! Allowed: " + PCharacter.getValidJobs());
-                return;
-            }
-            System.out.print("Level: "); int level = Integer.parseInt(sc.nextLine().trim());
-            System.out.print("HP: "); double hp = Double.parseDouble(sc.nextLine().trim());
-            System.out.print("Is the character in your party? (yes/no):"); String isActive = sc.nextLine();
-            if (!isActive.equalsIgnoreCase("yes") && !isActive.equalsIgnoreCase("no")) {
-                throw new IllegalArgumentException("\nActive must be 'yes' or 'no'");
-            }
-            boolean active = isActive.equalsIgnoreCase("yes");
+        boolean adding = true;
+        while (adding) {
+            System.out.println("\n--- Add character manually ---\n");
+            System.out.println("Enter character name: ");
+            String name = sc.nextLine();
+
+            String job = getValidJob(sc);
+            int level =  getValidLevel(sc);
+            double hp = getValidHP(sc);
+            boolean active = getValidActive(sc);
+
             ff.addCharacter(new PCharacter("", name, job, level, hp, active));
-            System.out.println("Character added!");
-        } catch (Exception e) { System.out.println("Error: " + e.getMessage()); }
+            System.out.println(name + " added successfully!");
+
+            System.out.print("Enter another character? (yes/no): ");
+            if (!sc.nextLine().equals("yes")) {
+                adding = false;
+            }
+        }
     }
 
     //function to read and add characters from the .txt file
@@ -173,4 +177,58 @@ public class FFCLI {
         }
     }
 
+    private static int getValidLevel(Scanner sc) {
+        while (true) {
+            System.out.print("Level: ");
+            try {
+                int level = Integer.parseInt(sc.nextLine().trim());
+                if (level > 0 && level < 100) return level;
+                System.out.println("Level must be between 1 and 99!");
+            } catch (NumberFormatException e) {
+                System.out.println("Invalid level!");
+            }
+        }
+    }
+
+    private static String getValidJob(Scanner sc) {
+        while (true) {
+            System.out.print("Job: ");
+            try {
+                String job = sc.nextLine().trim();
+                if (PCharacter.isValidJob(job)) return job;
+                else System.out.println("Enter one of the following: " + PCharacter.getValidJobs());
+            } catch (IllegalArgumentException e) {
+                System.out.println("Invalid job!");
+            }
+        }
+    }
+
+    private static double getValidHP(Scanner sc) {
+        while (true) {
+            System.out.print("HP: ");
+            try {
+                double hp = Double.parseDouble(sc.nextLine().trim());
+                if(hp > 0 ) return hp;
+                else System.out.println("Invalid HP!");
+            }catch (NumberFormatException e) {
+                System.out.println("Invalid HP!");}
+        }
+    }
+
+    private static boolean getValidActive(Scanner sc) {
+        while (true) {
+            System.out.print("Is the character in your party? (yes/no): ");
+            String response = sc.nextLine().trim().toLowerCase();
+
+            if (response.equals("yes")) return true;
+            if (response.equals("no")) return false;
+
+            System.out.println("Please enter yes or no.");
+        }
+    }
+
+    public static void debugCharacter(String id) {
+        PCharacters db = new PCharacters();
+        db.printById(id);
+    }
 }

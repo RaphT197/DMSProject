@@ -1,6 +1,4 @@
 package FFPackage;
-
-import java.sql.*;
 import java.util.*;
 
 public class PCharacter  {
@@ -27,11 +25,18 @@ public class PCharacter  {
 
     public static String generateId() {
         Random random = new Random();
-        return String.valueOf(1000 + random.nextInt(9000));
+        return String.valueOf(1000 + random.nextInt(9000)); // Generates 1000-9999
     }
 
+
     public PCharacter(String id, String name, String job, int level, double hp, boolean isActive) {
-        if (id == null || id.isEmpty()) this.id = generateId(); else this.id = id;
+        // If empty, generate random ID
+        if (id == null || id.isEmpty()) {
+            this.id = generateId();
+        } else {
+            this.id = id;
+        }
+
         this.name = name != null ? name.trim() : "";
 
         if (!isValidJob(job)) throw new IllegalArgumentException("Invalid job: " + job);
@@ -63,13 +68,11 @@ public class PCharacter  {
     public double getHp() { return hp; }
     public boolean isActive() { return isActive; }
 
-    public void setName( String name ) { this.name = name != null ? name.trim() : ""; }
-    public void setJob( String job ) { this.job = normalizeJob(job); }
+    public void setName(String name) { this.name = name != null ? name.trim() : ""; }
+    public void setJob(String job) { this.job = normalizeJob(job); }
     public void setLevel(int level) { this.level = level; }
     public void setHp(double hp) { this.hp = hp; }
     public void setActive(boolean active) { this.isActive = active; }
-
-
 
 
     @Override
@@ -77,6 +80,4 @@ public class PCharacter  {
         return String.format("%s (%s) - Job: %s, Lv: %d, HP: %.1f, Active: %b",
                 id, name, job, level, hp, isActive);
     }
-
-
 }

@@ -14,16 +14,26 @@ public class FF {
     private final int MIN_LEVEL = 1;
 
 
-    // Constructor: load characters from DB
-    public FF() {
-
-
-    }
-
 
     // add a character manually
-    public void addCharacter(PCharacter pc) {
-        db.insert(pc.getId(), pc.getName(), pc.getJob(), pc.getLevel(), pc.getHp(), pc.isActive());
+    public String addCharacter(PCharacter pc) {
+        String id = pc.getId();
+        int attempts = 0;
+        int maxAttempts = 100;
+
+        // Keep generating new IDs until we find a unique one
+        while (db.idExists(id)) {
+            id = PCharacter.generateId();
+            attempts++;
+
+            if (attempts >= maxAttempts) {
+                throw new IllegalStateException("Could not generate unique ID after " + maxAttempts + " attempts");
+            }
+        }
+
+        // Insert with the unique ID
+        db.insert(id, pc.getName(), pc.getJob(), pc.getLevel(), pc.getHp(), pc.isActive());
+        return id;
     }
 
     public ArrayList<PCharacter> getCharacters() { return db.selectAll(); }
@@ -204,5 +214,13 @@ public class FF {
         db.update("hp", String.valueOf(newHp), "id", id);
     }
 
+    public void updateIsActive(String id, boolean isActive) {
+        db.update("isActive", String.valueOf(isActive), "id", id);
+    }
+
+    public void singleCharacterDisplay(String id) {
+
+        db.printById(id);
+    }
 
 }
