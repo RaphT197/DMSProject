@@ -1,0 +1,8 @@
+<component name="libraryTable">
+  <library name="tesults.junit5" type="repository">
+    <properties maven-id="com.tesults.junit5:tesults-junit5:1.0.4" />
+    <CLASSES />
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>
