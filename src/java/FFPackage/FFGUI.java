@@ -2,12 +2,17 @@ package FFPackage;
 
 import javax.swing.*;
 import java.awt.*;
+import java.net.URL;
 import java.util.ArrayList;
+import java.util.InputMismatchException;
 import java.util.Random;
+import java.io.File;
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
 
 public class FFGUI {
     private JFrame frame;
-    private JTextArea outputArea;
+    private BackgroundTextArea outputArea;
     private FF ff;
     private JLabel jobImageLabel;
 
@@ -20,7 +25,7 @@ public class FFGUI {
         frame = new JFrame("FF Character Manager");
 
         // load icon using getResource
-        java.net.URL appIconURL = getClass().getResource("/images/app_icon.png");
+        URL appIconURL = getClass().getResource("/images/app_icon.png");
         if (appIconURL != null) {
             frame.setIconImage(new ImageIcon(appIconURL).getImage());
         } else {
@@ -31,9 +36,24 @@ public class FFGUI {
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setLayout(new BorderLayout());
 
-        outputArea = new JTextArea();
+        // Create the BackgroundTextArea
+        outputArea = new BackgroundTextArea();
         outputArea.setEditable(false);
-        frame.add(new JScrollPane(outputArea), BorderLayout.CENTER);
+
+        // Try to load the background image
+        java.net.URL bgImageURL = getClass().getResource("/images/carbuncles.png");
+        if (bgImageURL != null) {
+            outputArea.setBackgroundImage(new ImageIcon(bgImageURL).getImage(), 0.2f);
+        } else {
+            System.out.println("Background image not found!");
+        }
+
+        // Create scroll pane
+        JScrollPane scrollPane = new JScrollPane(outputArea);
+
+        // Add the scroll pane to the frame
+        frame.add(scrollPane, BorderLayout.CENTER);
+
 
         JPanel panel = new JPanel(new GridLayout(4, 4));
         JButton addManual = new JButton("Add Character");
@@ -84,6 +104,8 @@ public class FFGUI {
         }
     }
 
+
+
     // random job icon method
     private ImageIcon getRandomJobIcon() {
         String[] jobImageNames = {
@@ -107,25 +129,55 @@ public class FFGUI {
 
     //manually adds characters from the users input
     private void addCharacterManual() {
-        try {
-            String name = JOptionPane.showInputDialog(frame, "Name:").trim();
-            String job = JOptionPane.showInputDialog(frame, "Job:").trim();
-            if (!PCharacter.isValidJob(job)) {
-                JOptionPane.showMessageDialog(frame, "Invalid Job");
-                return;
+        boolean adding = true;
+        while (adding) {
+            try {
+                String name = JOptionPane.showInputDialog(frame, "Name:");
+                if (name == null) {
+                    adding = false;
+                    continue;
+                }
+
+                String job = validJob();
+                if (job == null) {
+                    adding = false;
+                    continue;
+                }
+
+                Integer level = validLevel();
+                if (level == null) {
+                    adding = false;
+                    continue;
+                }
+
+                Double hp = validHP();
+                if (hp == null) {
+                    adding = false;
+                    continue;
+                }
+
+                Boolean activeInput = validActive();
+                if (activeInput == null) {
+                    adding = false;
+                    continue;
+                }
+
+                PCharacter pc = new PCharacter("", name, job, level, hp, activeInput);
+                ff.addCharacter(pc);
+                outputArea.append("Added: " + pc + "\n");
+
+                JOptionPane.showMessageDialog(frame, "Character added successfully!");
+
+                int option = JOptionPane.showConfirmDialog(frame, "Would you like to add another character?");
+
+                if (option == JOptionPane.NO_OPTION || option == JOptionPane.CANCEL_OPTION || option == JOptionPane.CLOSED_OPTION) {
+                    adding = false;
+                }
+
+                updateRandomJobIcon();
+            } catch (Exception e) {
+                JOptionPane.showMessageDialog(frame, "Error, please try again! ");
             }
-            int level = Integer.parseInt(JOptionPane.showInputDialog(frame, "Level:").trim());
-            double hp = Double.parseDouble(JOptionPane.showInputDialog(frame, "HP:").trim());
-            String activeInput = JOptionPane.showInputDialog(frame, "In party? (yes/no):");
-            boolean isActive = activeInput.equalsIgnoreCase("yes");
-
-            PCharacter pc = new PCharacter("", name, job, level, hp, isActive);
-            ff.addCharacter(pc);
-            outputArea.append("Added: " + pc + "\n");
-
-            updateRandomJobIcon();
-        } catch (Exception e) {
-            JOptionPane.showMessageDialog(frame, "Error: " + e.getMessage());
         }
     }
 
@@ -167,7 +219,89 @@ public class FFGUI {
 
         //update a character by ID
         private void updateCharacter() {
-            String id = JOptionPane.showInputDialog(frame, "Character ID:");
+
+        boolean updating = true;
+        String id = "";
+        String[] options = {"Name", "Job", "Level", "HP", "Cancel"};
+
+            if(ff.getCharacters().isEmpty()) {
+                JOptionPane.showMessageDialog(frame, "Nothing to update.");
+            } else {
+                id = JOptionPane.showInputDialog(frame, "Character ID:");
+
+                while (updating) {
+                    int choice = JOptionPane.showOptionDialog(
+                            frame,  // ← Parent component
+                            "What would you like to update?",
+                            "Update Character",
+                            JOptionPane.DEFAULT_OPTION,
+                            JOptionPane.QUESTION_MESSAGE,
+                            null,
+                            options,
+                            options[0]
+                    );
+
+                    switch (choice) {
+                        case 0: // Name
+                            String newName = JOptionPane.showInputDialog(frame, "New name:");
+                            if (newName != null && !newName.trim().isEmpty()) {
+                                ff.updateCharacterName(id, newName);
+                                outputArea.append("\n--- Character Name Updated! ---\n");
+                                updateRandomJobIcon();
+                            }
+                            break;
+
+                        case 1: // Job
+                            String newJob = JOptionPane.showInputDialog(frame, "New job:");
+                            if (newJob != null && !newJob.trim().isEmpty()) {
+                                try {
+                                    ff.updateCharacterJob(id, newJob);
+                                    outputArea.append("\n--- Character Job Updated! ---\n");
+                                    updateRandomJobIcon();
+                                } catch (IllegalArgumentException e) {
+                                    JOptionPane.showMessageDialog(frame, "Invalid Job: " + e.getMessage());
+                                }
+                            }
+                            break;
+
+                        case 2: // Level
+                            String levelStr = JOptionPane.showInputDialog(frame, "New level (1-99):");
+                            if (levelStr != null) {
+                                try {
+                                    int newLevel = Integer.parseInt(levelStr.trim());
+                                    ff.updateCharacterLevel(id, newLevel);
+                                    outputArea.append("\n--- Character Level Updated! ---\n");
+                                    updateRandomJobIcon();
+                                } catch (NumberFormatException e) {
+                                    JOptionPane.showMessageDialog(frame, "Invalid number!");
+                                }
+                            }
+                            break;
+
+                        case 3: // HP
+                            String hpStr = JOptionPane.showInputDialog(frame, "New HP:");
+                            if (hpStr != null) {
+                                try {
+                                    double newHp = Double.parseDouble(hpStr.trim());
+                                    ff.updateCharacterHp(id, newHp);
+                                    outputArea.append("\n--- Character HP Updated! ---\n");
+                                    updateRandomJobIcon();
+                                } catch (NumberFormatException e) {
+                                    JOptionPane.showMessageDialog(frame, "Invalid number!");
+                                }
+                            }
+                            break;
+
+                        case 4: // Cancel
+                        case JOptionPane.CLOSED_OPTION: // User closed dialog
+                            updating = false;
+                            updateRandomJobIcon();
+                            break;
+                    }
+                }
+
+            }
+
 
             if (id == null || id.trim().isEmpty()) {
                 return;  // User cancelled
@@ -179,79 +313,10 @@ public class FFGUI {
                 return;
             }
 
-            String[] options = {"Name", "Job", "Level", "HP", "Cancel"};
-            boolean updating = true;
 
-            while (updating) {
-                int choice = JOptionPane.showOptionDialog(
-                        frame,  // ← Parent component
-                        "What would you like to update?",
-                        "Update Character",
-                        JOptionPane.DEFAULT_OPTION,
-                        JOptionPane.QUESTION_MESSAGE,
-                        null,
-                        options,
-                        options[0]
-                );
 
-                switch (choice) {
-                    case 0: // Name
-                        String newName = JOptionPane.showInputDialog(frame, "New name:");
-                        if (newName != null && !newName.trim().isEmpty()) {
-                            ff.updateCharacterName(id, newName);
-                            outputArea.append("\n--- Character Name Updated! ---\n");
-                            updateRandomJobIcon();
-                        }
-                        break;
 
-                    case 1: // Job
-                        String newJob = JOptionPane.showInputDialog(frame, "New job:");
-                        if (newJob != null && !newJob.trim().isEmpty()) {
-                            try {
-                                ff.updateCharacterJob(id, newJob);
-                                outputArea.append("\n--- Character Job Updated! ---\n");
-                                updateRandomJobIcon();
-                            } catch (IllegalArgumentException e) {
-                                JOptionPane.showMessageDialog(frame, "Invalid Job: " + e.getMessage());
-                            }
-                        }
-                        break;
 
-                    case 2: // Level
-                        String levelStr = JOptionPane.showInputDialog(frame, "New level (1-99):");
-                        if (levelStr != null) {
-                            try {
-                                int newLevel = Integer.parseInt(levelStr.trim());
-                                ff.updateCharacterLevel(id, newLevel);
-                                outputArea.append("\n--- Character Level Updated! ---\n");
-                                updateRandomJobIcon();
-                            } catch (NumberFormatException e) {
-                                JOptionPane.showMessageDialog(frame, "Invalid number!");
-                            }
-                        }
-                        break;
-
-                    case 3: // HP
-                        String hpStr = JOptionPane.showInputDialog(frame, "New HP:");
-                        if (hpStr != null) {
-                            try {
-                                double newHp = Double.parseDouble(hpStr.trim());
-                                ff.updateCharacterHp(id, newHp);
-                                outputArea.append("\n--- Character HP Updated! ---\n");
-                                updateRandomJobIcon();
-                            } catch (NumberFormatException e) {
-                                JOptionPane.showMessageDialog(frame, "Invalid number!");
-                            }
-                        }
-                        break;
-
-                    case 4: // Cancel
-                    case JOptionPane.CLOSED_OPTION: // User closed dialog
-                        updating = false;
-                        updateRandomJobIcon();
-                        break;
-                }
-            }
         }
 
     //remove characters by ID
@@ -290,6 +355,79 @@ public class FFGUI {
 
             searching = false;
 
+        }
+    }
+
+    private Boolean validActive() {
+        while(true) {
+            try {
+                String active = JOptionPane.showInputDialog(frame, "In party? (yes/no):");
+                if (active == null) { // User cancelled
+                    return null;
+                }
+                if (active.trim().isEmpty()) {
+                    JOptionPane.showMessageDialog(frame, "Invalid input!");
+                    continue;
+                }
+                if (active.equalsIgnoreCase("yes")) {
+                    return true;
+                }
+                if (active.equalsIgnoreCase("no")) {
+                    return false;
+                }
+                JOptionPane.showMessageDialog(frame, "Please type 'yes' or 'no'.");
+            } catch (InputMismatchException e) {
+                JOptionPane.showMessageDialog(frame, "Invalid input! Please type yes or no ");
+            }
+        }
+    }
+
+    private Double validHP() {
+        while(true) {
+            try {
+                String input = JOptionPane.showInputDialog(frame, "HP:");
+                if (input == null) { // User cancelled
+                    return null;
+                }
+                double hp = Double.parseDouble(input);
+                if (hp <= 0) {
+                    JOptionPane.showMessageDialog(frame, "HP must be greater than 0.");
+                } else return hp;
+            } catch (NumberFormatException e) {
+                JOptionPane.showMessageDialog(frame, "Invalid number!");
+            }
+        }
+    }
+
+    private String validJob() {
+        while(true) {
+            try {
+                String input = JOptionPane.showInputDialog(frame, "Job:");
+                if (input == null) { // User cancelled
+                    return null;
+                }
+                String job = input.trim();
+                if (PCharacter.isValidJob(job)) return job;
+                else JOptionPane.showMessageDialog(frame, "Invalid Job: " + job);
+            } catch (IllegalArgumentException e) {
+                JOptionPane.showMessageDialog(frame, "Invalid Job: " + e.getMessage());
+            }
+        }
+    }
+
+    private Integer validLevel() {
+        while(true) {
+            try {
+                String input = JOptionPane.showInputDialog(frame, "Level:");
+                if (input == null) { // User cancelled
+                    return null;
+                }
+                int level = Integer.parseInt(input.trim());
+                if (level > 0 && level < 100) return level;
+                JOptionPane.showMessageDialog(frame, "Levels must be between 1 and 99 " + level);
+            } catch (IllegalArgumentException e) {
+                JOptionPane.showMessageDialog(frame, "Invalid entry, please use numbers between 1 and 99. ");
+            }
         }
     }
 

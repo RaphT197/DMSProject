@@ -8,7 +8,7 @@ public class PCharacters {
     private final String CONNECTION_STRING;
 
     public PCharacters() {
-        this("C:\\Users\\phael\\IdeaProjects\\DMSProject\\test_ffgame.db");
+        this("C:\\Users\\phael\\IdeaProjects\\DMSProject\\ffgame.db");
     }
 
     public PCharacters(String databasePath) {
