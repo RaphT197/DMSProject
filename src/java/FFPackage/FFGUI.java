@@ -6,9 +6,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.InputMismatchException;
 import java.util.Random;
-import java.io.File;
-import javax.imageio.ImageIO;
-import java.awt.image.BufferedImage;
+
 
 public class FFGUI {
     private JFrame frame;
@@ -175,7 +173,7 @@ public class FFGUI {
                 }
 
                 updateRandomJobIcon();
-            } catch (Exception e) {
+            } catch (HeadlessException e) {
                 JOptionPane.showMessageDialog(frame, "Error, please try again! ");
             }
         }
@@ -242,16 +240,18 @@ public class FFGUI {
                     );
 
                     switch (choice) {
-                        case 0: // Name
+                        case 0 -> {
+                            // Name
                             String newName = JOptionPane.showInputDialog(frame, "New name:");
                             if (newName != null && !newName.trim().isEmpty()) {
                                 ff.updateCharacterName(id, newName);
                                 outputArea.append("\n--- Character Name Updated! ---\n");
                                 updateRandomJobIcon();
                             }
-                            break;
+                        }
 
-                        case 1: // Job
+                        case 1 -> {
+                            // Job
                             String newJob = JOptionPane.showInputDialog(frame, "New job:");
                             if (newJob != null && !newJob.trim().isEmpty()) {
                                 try {
@@ -262,9 +262,10 @@ public class FFGUI {
                                     JOptionPane.showMessageDialog(frame, "Invalid Job: " + e.getMessage());
                                 }
                             }
-                            break;
+                        }
 
-                        case 2: // Level
+                        case 2 -> {
+                            // Level
                             String levelStr = JOptionPane.showInputDialog(frame, "New level (1-99):");
                             if (levelStr != null) {
                                 try {
@@ -276,9 +277,10 @@ public class FFGUI {
                                     JOptionPane.showMessageDialog(frame, "Invalid number!");
                                 }
                             }
-                            break;
+                        }
 
-                        case 3: // HP
+                        case 3 -> {
+                            // HP
                             String hpStr = JOptionPane.showInputDialog(frame, "New HP:");
                             if (hpStr != null) {
                                 try {
@@ -290,15 +292,17 @@ public class FFGUI {
                                     JOptionPane.showMessageDialog(frame, "Invalid number!");
                                 }
                             }
-                            break;
+                        }
 
-                        case 4: // Cancel
-                        case JOptionPane.CLOSED_OPTION: // User closed dialog
+                        case 4, JOptionPane.CLOSED_OPTION -> // Cancel
+                        {
+                            // User closed dialog
                             updating = false;
                             updateRandomJobIcon();
-                            break;
+                        }
                     }
-                }
+                    // Cancel
+                                    }
 
             }
 
@@ -310,8 +314,7 @@ public class FFGUI {
             if (!ff.characterExists(id)) {
                 JOptionPane.showMessageDialog(frame, "Character does not exist.");
                 updateRandomJobIcon();
-                return;
-            }
+}
 
 
 
@@ -333,7 +336,7 @@ public class FFGUI {
 
             if(id == null) {
                 searching = false;
-                break;
+                continue;
             }
 
             if (!ff.characterExists(id)) {
@@ -351,6 +354,8 @@ public class FFGUI {
             if(confirm == JOptionPane.YES_OPTION) {
                 ff.removeCharacterById(id);
                 outputArea.append("Removed: " + id + "\n");
+                displayCharacters();
+                updateRandomJobIcon();
             }
 
             searching = false;
