@@ -1,16 +1,25 @@
 package DBHelper;
 
 import FFPackage.PCharacter;
+import java.io.File;
 import java.sql.*;
 import java.util.ArrayList;
 
 public class PCharacters {
     private final String CONNECTION_STRING;
 
+    // Default constructor - uses database in project root
     public PCharacters() {
-        this("C:\\Users\\phael\\IdeaProjects\\DMSProject\\ffgame.db");
+        String projectRoot = System.getProperty("user.dir");
+        String dbPath = projectRoot + File.separator + "ffgame.db";
+        this.CONNECTION_STRING = "jdbc:sqlite:" + dbPath;
+        initializeDatabase();
+
+        // Optional: Print for debugging
+        System.out.println("Using database: " + dbPath);
     }
 
+    // Constructor for custom database path (used in tests)
     public PCharacters(String databasePath) {
         this.CONNECTION_STRING = "jdbc:sqlite:" + databasePath;
         initializeDatabase();
@@ -37,8 +46,6 @@ public class PCharacters {
     }
 
     public void insert(String id, String name, String job, int level, double hp, boolean isActive) {
-
-
         String sql = "INSERT INTO characters (id,name,job,level,hp,isActive) VALUES (?,?,?,?,?,?)";
         try (Connection conn = DriverManager.getConnection(CONNECTION_STRING);
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
@@ -49,7 +56,6 @@ public class PCharacters {
             pstmt.setDouble(5, hp);
             pstmt.setInt(6, isActive ? 1 : 0);
             pstmt.executeUpdate();
-
         } catch (SQLException e) {
             e.printStackTrace();
             throw new RuntimeException("Failed to insert character: " + e.getMessage());
@@ -65,7 +71,6 @@ public class PCharacters {
             pstmt.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
-
         }
     }
 
@@ -168,15 +173,13 @@ public class PCharacters {
                             rs.getDouble("hp"),
                             rs.getInt("isActive") == 1
                     ));
+                } else {
+                    System.out.println("No character found with ID: " + id);
                 }
-
             }
 
         } catch (SQLException e) {
             e.printStackTrace();
         }
     }
-
-
-
 }
