@@ -54,11 +54,12 @@ public class PCharactersTest {
         String name = "Cloud";
         String job = "Warrior";
         int level = 50;
-        double hp = 9999;
+        int hp = 9999;
+        int mp = 9999;
         boolean isActive = true;
 
         // Act
-        db.insert(id, name, job, level, hp, isActive);
+        db.insert(id, name, job, level, hp, mp , isActive);
         PCharacter retrieved = db.selectById(id);
 
         // Assert
@@ -78,7 +79,7 @@ public class PCharactersTest {
     public void testIdExists() {
         // Arrange
         String id = "1111";
-        db.insert(id, "Cloud", "Warrior", 50, 9999, true);
+        db.insert(id, "Cloud", "Warrior", 50, 9999,9999, true);
 
         // Act & Assert
         assertTrue(db.idExists(id), "ID should exist after insert");
@@ -89,7 +90,7 @@ public class PCharactersTest {
     public void testUpdate() {
         // Arrange
         String id = "1111";
-        db.insert(id, "Cloud", "Warrior", 50, 9999, true);
+        db.insert(id, "Cloud", "Warrior", 50, 9999, 9999,true);
 
         // Act
         db.update("name", "Cloud Strife", "id", id);
@@ -104,11 +105,11 @@ public class PCharactersTest {
     public void testDelete() {
         // Arrange
         String id = "1111";
-        db.insert(id, "Cloud", "Warrior", 50, 9999, true);
+        db.insert(id, "Cloud", "Warrior", 50, 9999, 9999 ,true);
         assertTrue(db.idExists(id), "Character should exist before delete");
 
         String id2 = "1234";
-        db.insert(id2, "Cloud", "Warrior", 50, 9999, true);
+        db.insert(id2, "Cloud", "Warrior", 50, 9999, 9999 ,true);
         assertTrue(db.idExists(id), "Character should exist before delete");
 
         // Act
@@ -125,9 +126,9 @@ public class PCharactersTest {
     @Test
     public void testSelectAll() {
         // Arrange
-        db.insert("1234", "Cloud", "Warrior", 50, 9999, true);
-        db.insert("3333", "Tifa", "Monk", 48, 8800, true);
-        db.insert("5555", "Barrett", "Dragoon", 48, 8800, true);
+        db.insert("1234", "Cloud", "Warrior", 50, 9999, 9500 ,true);
+        db.insert("3333", "Tifa", "Monk", 48, 8800, 5500 ,true);
+        db.insert("5555", "Barrett", "Dragoon", 48, 8800, 5500 ,true);
 
         // Act
         ArrayList<PCharacter> all = db.selectAll();
@@ -169,7 +170,7 @@ public class PCharactersTest {
     public void testPrintById() {
         // Arrange
         String id = "5555";
-        db.insert(id, "Barrett", "Dragoon", 99, 125421, false);
+        db.insert(id, "Barrett", "Dragoon", 99, 125421, 6000,false);
 
         //  this will print to console
         System.out.println("\n=== Testing printById ===");

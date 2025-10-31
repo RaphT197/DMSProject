@@ -1,7 +1,6 @@
 package FFPackage;
 
 import DBHelper.PCharacters;
-
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
@@ -32,7 +31,7 @@ public class FF {
         }
 
         // Insert with the unique ID
-        db.insert(id, pc.getName(), pc.getJob(), pc.getLevel(), pc.getHp(), pc.isActive());
+        db.insert(id, pc.getName(), pc.getJob(), pc.getLevel(), pc.getHp(), pc.getMp() , pc.isActive());
         return id;
     }
 
@@ -52,7 +51,7 @@ public class FF {
         if (newLevel > MAX_LEVEL) newLevel = MAX_LEVEL;
         if (newLevel < MIN_LEVEL) newLevel = MIN_LEVEL;
 
-        double newHp = c.getHp() + new Random().nextInt(500);
+        int newHp = c.getHp() + new Random().nextInt(500);
 
         db.update("level", String.valueOf(newLevel), "id", id);
         db.update("hp", String.valueOf(newHp), "id", id);
@@ -74,6 +73,7 @@ public class FF {
                     2. Change job
                     3. Change level
                     4. Change hp
+                    5. Change mp
                     5. Exit
                     """;
 
@@ -123,7 +123,7 @@ public class FF {
                 case "4":
                     System.out.print("Enter new hp: ");
                     try {
-                        double newHp = Double.parseDouble(sc.nextLine());
+                        int newHp = Integer.parseInt(sc.nextLine());
                         c.setHp(newHp);
                         db.update("hp", String.valueOf(newHp), "id", id);
                         System.out.println("Character's hp has been updated to: " + c.getHp());
@@ -150,7 +150,7 @@ public class FF {
             while (fileScanner.hasNextLine()) {
                 String line = fileScanner.nextLine();
                 String[] parts = line.split(",");
-                if (parts.length != 5) {
+                if (parts.length != 6) {
                     System.out.println("Skipping invalid line: " + line);
                     continue;
                 }
@@ -159,8 +159,9 @@ public class FF {
                     String name = parts[0].trim();
                     String job = parts[1].trim();
                     int level = Integer.parseInt(parts[2].trim());
-                    double hp = Double.parseDouble(parts[3].trim());
-                    boolean isActive = Boolean.parseBoolean(parts[4].trim());
+                    int hp = Integer.parseInt(parts[3].trim());
+                    int mp = Integer.parseInt(parts[4].trim());
+                    boolean isActive = Boolean.parseBoolean(parts[5].trim());
 
                     // Validate job
                     if (!PCharacter.isValidJob(job)) {
@@ -172,7 +173,7 @@ public class FF {
                     if (level < MIN_LEVEL) level = MIN_LEVEL;
                     if (level > MAX_LEVEL) level = MAX_LEVEL;
 
-                    PCharacter newChar = new PCharacter("", name, job, level, hp, isActive);
+                    PCharacter newChar = new PCharacter("", name, job, level, hp, mp, isActive);
                     addCharacter(newChar);
                     System.out.println("Added: " + newChar);
                 } catch (NumberFormatException nfe) {

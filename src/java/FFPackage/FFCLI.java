@@ -47,10 +47,11 @@ public class FFCLI {
 
             String job = getValidJob(sc);
             int level =  getValidLevel(sc);
-            double hp = getValidHP(sc);
+            int hp = getValidHP(sc);
+            int mp = getValidMP(sc);
             boolean active = getValidActive(sc);
 
-            ff.addCharacter(new PCharacter("", name, job, level, hp, active));
+            ff.addCharacter(new PCharacter("", name, job, level, hp, mp, active));
             System.out.println(name + " added successfully!");
 
             System.out.print("Enter another character? (yes/no): ");
@@ -203,15 +204,28 @@ public class FFCLI {
         }
     }
 
-    private static double getValidHP(Scanner sc) {
+    private static Integer getValidHP(Scanner sc) {
         while (true) {
             System.out.print("HP: ");
             try {
-                double hp = Double.parseDouble(sc.nextLine().trim());
+                int hp = Integer.parseInt(sc.nextLine().trim());
                 if(hp > 0 ) return hp;
                 else System.out.println("Invalid HP!");
             }catch (NumberFormatException e) {
                 System.out.println("Invalid HP!");}
+        }
+    }
+
+    private static Integer getValidMP(Scanner sc) {
+        while (true) {
+            System.out.print("MP: ");
+            try {
+                int mp = Integer.parseInt(sc.nextLine().trim());
+                if(mp > 0 ) return mp;
+                else System.out.println("Invalid MP!");
+            } catch (NumberFormatException e) {
+                System.out.println("Invalid MP!");
+            }
         }
     }
 

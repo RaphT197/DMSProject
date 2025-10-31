@@ -6,7 +6,8 @@ public class PCharacter  {
     private String name;
     private String job;
     private int level;
-    private double hp;
+    private int hp;
+    private int mp;
     private boolean isActive;
 
     private static final Set<String> validJobs = new HashSet<>(Arrays.asList(
@@ -29,7 +30,7 @@ public class PCharacter  {
     }
 
 
-    public PCharacter(String id, String name, String job, int level, double hp, boolean isActive) {
+    public PCharacter(String id, String name, String job, int level, int hp, int mp, boolean isActive) {
         // If empty, generate random ID
         if (id == null || id.isEmpty()) {
             this.id = generateId();
@@ -46,7 +47,10 @@ public class PCharacter  {
         this.level = level;
 
         if (hp < 0) throw new IllegalArgumentException("HP cannot be negative");
-        this.hp = hp;
+        this.hp =  hp;
+
+        if (mp < 0) throw new IllegalArgumentException("MP cannot be negative");
+        this.mp = mp;
 
         this.isActive = isActive;
     }
@@ -65,19 +69,21 @@ public class PCharacter  {
     public String getName() { return name; }
     public String getJob() { return job; }
     public int getLevel() { return level; }
-    public double getHp() { return hp; }
+    public int getMp() { return mp; }
+    public int getHp() { return hp; }
     public boolean isActive() { return isActive; }
 
     public void setName(String name) { this.name = name != null ? name.trim() : ""; }
     public void setJob(String job) { this.job = normalizeJob(job); }
     public void setLevel(int level) { this.level = level; }
-    public void setHp(double hp) { this.hp = hp; }
+    public void setHp(int hp) { this.hp = hp; }
+    public void setMp(int mp) { this.mp = mp; }
     public void setActive(boolean active) { this.isActive = active; }
 
 
     @Override
     public String toString() {
-        return String.format("%s (%s) - Job: %s, Lv: %d, HP: %.1f, Active: %b",
-                id, name, job, level, hp, isActive);
+        return String.format("%s (%s) - Job: %s, Lv: %d, HP: %d, MP: %d, Active: %b",
+                id, name, job, level, hp, mp, isActive);
     }
 }

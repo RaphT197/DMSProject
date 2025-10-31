@@ -18,7 +18,7 @@ public class FFGUI {
     // JTable components
     private JTable characterTable;
     private DefaultTableModel tableModel;
-    private final String[] columnNames = {"ID", "Name", "Job", "Level", "HP", "In Party"};
+    private final String[] columnNames = {"ID", "Name", "Job", "Level", "HP", "MP", "In Party"};
 
     public FFGUI() {
         ff = new FF();
@@ -59,7 +59,7 @@ public class FFGUI {
         // starts character table where user interacts
         characterTable = new JTable(tableModel);
         characterTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        characterTable.setRowHeight(25);
+        characterTable.setRowHeight(27);
         characterTable.setOpaque(false);  // Make table transparent to see background
 
 
@@ -200,7 +200,8 @@ public class FFGUI {
                     c.getName(),
                     c.getJob(),
                     c.getLevel(),
-                    String.format("%.1f", c.getHp()),
+                    c.getHp(),
+                    c.getMp(),
                     c.isActive() ? "Yes" : "No"
             };
             tableModel.addRow(row);
@@ -231,13 +232,16 @@ public class FFGUI {
             Integer level = validLevel();
             if (level == null) return;
 
-            Double hp = validHP();
+            Integer hp = validHP();
             if (hp == null) return;
+
+            Integer mp = validMp();
+            if (mp == null) return;
 
             Boolean active = validActive();
             if (active == null) return;
 
-            PCharacter pc = new PCharacter("", name, job, level, hp, active);
+            PCharacter pc = new PCharacter("", name, job, level, hp, mp, active);
             String assignedId = ff.addCharacter(pc);
 
             JOptionPane.showMessageDialog(frame,
@@ -323,7 +327,7 @@ public class FFGUI {
                     }
                 }
                 case 3 -> {  // HP
-                    Double newHp = validHP();
+                    Integer newHp = validHP();
                     if (newHp != null) {
                         ff.updateCharacterHp(id, newHp);
                         refreshTable();
@@ -371,15 +375,30 @@ public class FFGUI {
     }
 
     // Validation methods
-    private Double validHP() {
+    private Integer validHP() {
         while (true) {
             try {
                 String input = JOptionPane.showInputDialog(frame, "HP:");
                 if (input == null) return null;
-                double hp = Double.parseDouble(input);
+                int hp = Integer.parseInt(input);
                 if (hp <= 0) {
                     JOptionPane.showMessageDialog(frame, "HP must be greater than 0.");
                 } else return hp;
+            } catch (NumberFormatException e) {
+                JOptionPane.showMessageDialog(frame, "Invalid number!");
+            }
+        }
+    }
+
+    private Integer validMp() {
+        while (true) {
+            try {
+                String input = JOptionPane.showInputDialog(frame, "MP:");
+                if (input == null) return null;
+                int mp = Integer.parseInt(input);
+                if (mp <= 0) {
+                    JOptionPane.showMessageDialog(frame, "MP must be greater than 0.");
+                } else return mp;
             } catch (NumberFormatException e) {
                 JOptionPane.showMessageDialog(frame, "Invalid number!");
             }

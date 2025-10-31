@@ -31,7 +31,8 @@ public class PCharacters {
                 "name TEXT NOT NULL, " +
                 "job TEXT NOT NULL, " +
                 "level INTEGER NOT NULL, " +
-                "hp REAL NOT NULL, " +
+                "hp INTEGER NOT NULL, " +
+                "mp INTEGER NOT NULL, " +
                 "isActive INTEGER NOT NULL)";
         execute(sql);
     }
@@ -45,16 +46,17 @@ public class PCharacters {
         }
     }
 
-    public void insert(String id, String name, String job, int level, double hp, boolean isActive) {
-        String sql = "INSERT INTO characters (id,name,job,level,hp,isActive) VALUES (?,?,?,?,?,?)";
+    public void insert(String id, String name, String job, int level, int hp, int mp, boolean isActive) {
+        String sql = "INSERT INTO characters (id,name,job,level,hp,mp,isActive) VALUES (?,?,?,?,?,?,?)";
         try (Connection conn = DriverManager.getConnection(CONNECTION_STRING);
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setString(1, id);
             pstmt.setString(2, name);
             pstmt.setString(3, job);
             pstmt.setInt(4, level);
-            pstmt.setDouble(5, hp);
-            pstmt.setInt(6, isActive ? 1 : 0);
+            pstmt.setInt(5, hp);
+            pstmt.setInt(6, mp);
+            pstmt.setInt(7, isActive ? 1 : 0);
             pstmt.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -119,7 +121,8 @@ public class PCharacters {
                             rs.getString("name"),
                             rs.getString("job"),
                             rs.getInt("level"),
-                            rs.getDouble("hp"),
+                            rs.getInt("hp"),
+                            rs.getInt("mp"),
                             rs.getInt("isActive") == 1
                     );
                 }
@@ -144,7 +147,8 @@ public class PCharacters {
                         rs.getString("name"),
                         rs.getString("job"),
                         rs.getInt("level"),
-                        rs.getDouble("hp"),
+                        rs.getInt("hp"),
+                        rs.getInt("mp"),
                         rs.getInt("isActive") == 1
                 );
                 list.add(pc);
@@ -170,7 +174,8 @@ public class PCharacters {
                             rs.getString("name"),
                             rs.getString("job"),
                             rs.getInt("level"),
-                            rs.getDouble("hp"),
+                            rs.getInt("hp"),
+                            rs.getInt("mp"),
                             rs.getInt("isActive") == 1
                     ));
                 } else {
