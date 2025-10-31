@@ -138,7 +138,6 @@ public class FF {
                     break;
                 default:
                     System.out.println("Invalid choice. Try again.");
-                    continue;
             }
         }
     }
@@ -213,10 +212,6 @@ public class FF {
 
     public void updateCharacterHp(String id, double newHp) {
         db.update("hp", String.valueOf(newHp), "id", id);
-    }
-
-    public void updateIsActive(String id, boolean isActive) {
-        db.update("isActive", String.valueOf(isActive), "id", id);
     }
 
     public void singleCharacterDisplay(String id) {

@@ -2,7 +2,7 @@ package FFPackage;
 import java.util.*;
 
 public class PCharacter  {
-    private String id;
+    private final String id;
     private String name;
     private String job;
     private int level;
