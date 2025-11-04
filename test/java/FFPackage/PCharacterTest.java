@@ -1,5 +1,7 @@
-package FFPackage;
+package java.FFPackage;
 
+import FFPackage.FF;
+import FFPackage.PCharacter;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -10,7 +12,7 @@ public class PCharacterTest {
     @Test
     public void testValidCharacterCreation() {
         // Arrange & Act
-        PCharacter character = new PCharacter("1234", "Cloud", "Warrior", 50, 9999, true);
+        PCharacter character = new PCharacter("1234", "Cloud", "Warrior", 50, 9999,9999, true);
 
         // Assert
         assertEquals("1234", character.getId());
@@ -26,14 +28,14 @@ public class PCharacterTest {
     public void testInvalidJobThrowsException() {
         // Act & Assert
         assertThrows(IllegalArgumentException.class, () -> {
-            new PCharacter("3333", "Cloud", "InvalidJob", 50, 9999, true);
+            new PCharacter("3333", "Cloud", "InvalidJob", 50, 9999, 999,true);
         });
     }
 
     @Test
     public void testJobNormalization() {
         // Test case-insensitive job matching
-        PCharacter character = new PCharacter("5555", "Cloud", "warrior", 50, 9999, true);
+        PCharacter character = new PCharacter("5555", "Cloud", "warrior", 50, 9999, 999,true);
         assertEquals("Warrior", character.getJob()); // Should be capitalized
         ff.singleCharacterDisplay("5555");
     }
@@ -42,34 +44,34 @@ public class PCharacterTest {
     public void testLevelBoundaries() {
         // Test level too low
         assertThrows(IllegalArgumentException.class, () -> {
-            new PCharacter("1234", "Cloud", "Warrior", 0, 9999, true);
+            new PCharacter("1234", "Cloud", "Warrior", 0, 9999,9999, true);
         });
 
         // Test level too high
         assertThrows(IllegalArgumentException.class, () -> {
-            new PCharacter("1234", "Cloud", "Warrior", 100, 9999, true);
+            new PCharacter("1234", "Cloud", "Warrior", 100, 9999,9999, true);
         });
 
         // Test valid boundaries
-        PCharacter min = new PCharacter("3214", "Cloud", "Warrior", 1, 9999, true);
+        PCharacter min = new PCharacter("3214", "Cloud", "Warrior", 1, 9999,9999, true);
         assertEquals(1, min.getLevel());
         ff.singleCharacterDisplay("3214");
 
-        PCharacter max = new PCharacter("5678", "Tifa", "Monk", 99, 9999, true);
+        PCharacter max = new PCharacter("5678", "Tifa", "Monk", 99, 9999, 999,true);
         assertEquals(99, max.getLevel());
     }
 
     @Test
     public void testNegativeHpThrowsException() {
         assertThrows(IllegalArgumentException.class, () -> {
-            new PCharacter("9889", "Cloud", "Warrior", 50, -100, true);
+            new PCharacter("9889", "Cloud", "Warrior", 50, -100, -1000,true);
         });
     }
 
     @Test
     public void testIdGeneration() {
         // Test auto-generated ID when empty string provided
-        PCharacter character = new PCharacter("", "Cloud", "Warrior", 50, 9999, true);
+        PCharacter character = new PCharacter("", "Cloud", "Warrior", 50, 9999, 9999,true);
 
         assertNotNull(character.getId());
         assertEquals(4, character.getId().length()); // Should be 4 digits

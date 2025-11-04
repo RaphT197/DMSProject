@@ -3,7 +3,12 @@
     <output-path>$PROJECT_DIR$/out/artifacts/DMSProject_jar</output-path>
     <root id="archive" name="DMSProject.jar">
       <element id="module-output" name="DMSProject" />
-      <element id="extracted-dir" path="$USER_HOME$/Downloads/sqlite-3.40.1/sqlite-jdbc-3.40.1.0.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$USER_HOME$/Desktop/junit-jupiter-api-5.8.1.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$USER_HOME$/Downloads/sqlite-jdbc-3.50.3.0.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$MAVEN_REPOSITORY$/com/formdev/flatlaf-intellij-themes/3.4.1/flatlaf-intellij-themes-3.4.1.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$MAVEN_REPOSITORY$/com/formdev/flatlaf/3.4.1/flatlaf-3.4.1.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$MAVEN_REPOSITORY$/com/formdev/flatlaf-swingx/3.5/flatlaf-swingx-3.5.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$MAVEN_REPOSITORY$/com/formdev/flatlaf/3.5/flatlaf-3.5.jar" path-in-jar="/" />
     </root>
   </artifact>
 </component>

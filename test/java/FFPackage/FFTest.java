@@ -14,9 +14,9 @@ public class FFTest {
         ff = new FF();
 
         // Add a test character
-        PCharacter testChar = new PCharacter("1234", "Cloud", "Warrior", 50, 9999, true);
-        PCharacter testChar2 = new PCharacter("9632", "Rukki", "Dragoon", 22, 100, true);
-        PCharacter testChar3 = new PCharacter("3232", "Tifa", "Warrior", 50, 9999, true);
+        PCharacter testChar = new PCharacter("1234", "Cloud", "Warrior", 50, 9999,999, true);
+        PCharacter testChar2 = new PCharacter("9632", "Rukki", "Dragoon", 22, 100, 10000,true);
+        PCharacter testChar3 = new PCharacter("3232", "Tifa", "Warrior", 50, 9999, 2220,true);
         ff.addCharacter(testChar);
         ff.addCharacter(testChar2);
         ff.addCharacter(testChar3);
@@ -43,7 +43,7 @@ public class FFTest {
     public void testLevelUpClampsAtMax() {
         // Arrange
 
-        PCharacter highLevel = new PCharacter("5678", "Tifa", "Monk", 98, 9999, true);
+        PCharacter highLevel = new PCharacter("5678", "Tifa", "Monk", 98, 9999,2331, true);
         ff.addCharacter(highLevel);
 
         // Act

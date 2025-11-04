@@ -287,7 +287,7 @@ public class FFGUI {
         String id = getSelectedId();
         if (id == null) return;
 
-        String[] options = {"Name", "Job", "Level", "HP", "Cancel"};
+        String[] options = {"Name", "Job", "Level", "HP", "MP", "Cancel"};
 
         int choice = JOptionPane.showOptionDialog(
                 frame,
@@ -332,6 +332,14 @@ public class FFGUI {
                         ff.updateCharacterHp(id, newHp);
                         refreshTable();
                         JOptionPane.showMessageDialog(frame, "HP updated!");
+                    }
+                }
+                case 4 -> {
+                    Integer newMp = validMp();
+                    if (newMp != null) {
+                        ff.updateCharacterMp(id, newMp);
+                        refreshTable();
+                        JOptionPane.showMessageDialog(frame, "MP updated!");
                     }
                 }
             }

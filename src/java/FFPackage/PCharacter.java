@@ -15,7 +15,7 @@ public class PCharacter  {
             "Knight","Ninja","Master","Red Wizard","White Wizard","Black Wizard",
             "Archer","Bard","Beastmaster","Berserker","Blue Mage","Chemist",
             "Dancer","Dark Knight","Dragoon","Machinist","Geomancer","Samurai",
-            "Summoner","Scholar","Astrologian","Time Mage"
+            "Summoner","Scholar","Astrologian","Time Mage", "Prince", "Soldier", "Saboteur"
     ));
 
     public static boolean isValidJob(String job) {

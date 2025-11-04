@@ -210,8 +210,12 @@ public class FF {
         db.update("level", String.valueOf(newLevel), "id", id);
     }
 
-    public void updateCharacterHp(String id, double newHp) {
+    public void updateCharacterHp(String id, int newHp) {
         db.update("hp", String.valueOf(newHp), "id", id);
+    }
+
+    public void updateCharacterMp(String id, int newMp) {
+        db.update("mp", String.valueOf(newMp), "id", id);
     }
 
     public void singleCharacterDisplay(String id) {
