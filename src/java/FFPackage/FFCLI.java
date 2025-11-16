@@ -1,16 +1,44 @@
 package FFPackage;
+
 import DBHelper.PCharacters;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Scanner;
 
+/**
+ * Simple command-line interface (CLI) for managing {@link PCharacter} data.
+ * <p>
+ * This class provides a text menu for:
+ * <ul>
+ *     <li>Adding characters manually</li>
+ *     <li>Importing characters from a file</li>
+ *     <li>Listing all characters</li>
+ *     <li>Leveling up characters</li>
+ *     <li>Updating and removing characters</li>
+ * </ul>
+ * It delegates all business logic to {@link FF} and persistence to {@link PCharacters}.
+ */
 public class FFCLI {
+
+    /**
+     * Single shared {@link Scanner} instance for reading console input.
+     */
     private static final Scanner sc = new Scanner(System.in);
+
+    /**
+     * Service layer that encapsulates character-related operations.
+     */
     private static final FF ff = new FF();
 
-
-    //menu for the CLI
+    /**
+     * Entry point for the CLI application.
+     * <p>
+     * Displays a looped menu and routes user input to the corresponding
+     * handler methods until the user chooses to exit.
+     *
+     * @param args command line arguments (unused)
+     */
     public static void main(String[] args) {
         while (true) {
             System.out.println("\n--- Final Fantasy Manager (CLI) ---");
@@ -37,7 +65,13 @@ public class FFCLI {
         }
     }
 
-    // user can manually enter a character
+    /**
+     * Interactive flow to manually add characters one by one.
+     * <p>
+     * Prompts the user for all fields (name, job, level, HP, MP, active)
+     * and uses validation helper methods to ensure correct input.
+     * Continues until the user answers something other than {@code "yes"}.
+     */
     private static void addManual() {
         boolean adding = true;
         while (adding) {
@@ -46,7 +80,7 @@ public class FFCLI {
             String name = sc.nextLine();
 
             String job = getValidJob(sc);
-            int level =  getValidLevel(sc);
+            int level = getValidLevel(sc);
             int hp = getValidHP(sc);
             int mp = getValidMP(sc);
             boolean active = getValidActive(sc);
@@ -61,26 +95,52 @@ public class FFCLI {
         }
     }
 
-    //function to read and add characters from the .txt file
+    /**
+     * Asks the user for a file path and imports characters from that file.
+     * <p>
+     * The actual parsing and validation is delegated to
+     * {@link FF#addCharactersFromFile(String)}.
+     * The path must point to an existing file or an error is shown.
+     */
     private static void addFromFile() {
         System.out.print("Enter filename (absolute path): ");
         String path = sc.nextLine().trim();
         File f = new File(path);
-        if (!f.exists()) { System.out.println("File does not exist."); return; }
+        if (!f.exists()) {
+            System.out.println("File does not exist.");
+            return;
+        }
         ff.addCharactersFromFile(path);
         System.out.println("Characters imported from file.");
     }
 
-    //display all characters in the database
+    /**
+     * Displays all characters currently stored in the database.
+     * <p>
+     * If there are no characters, a friendly message is shown instead.
+     */
     private static void display() {
         ArrayList<PCharacter> characters = ff.getCharacters();
-        if  (characters.isEmpty()) { System.out.println("No characters added!");  return; }
-        else {
-            for (PCharacter c : ff.getCharacters()) System.out.println(c);
+        if (characters.isEmpty()) {
+            System.out.println("No characters added!");
+            return;
+        } else {
+            for (PCharacter c : ff.getCharacters()) {
+                System.out.println(c);
+            }
         }
     }
 
-    //allows users to levelup a character by their character ID
+    /**
+     * Allows the user to level up a specific character by ID.
+     * <p>
+     * Includes:
+     * <ul>
+     *     <li>Early exit with "E"</li>
+     *     <li>Basic ID length validation</li>
+     *     <li>Existence check before leveling up</li>
+     * </ul>
+     */
     private static void levelUp() {
 
         int maxDigit = 4;
@@ -92,13 +152,12 @@ public class FFCLI {
                 System.out.println("No characters in the database!");
                 active = false;
 
-            }
-            else {
+            } else {
                 System.out.print("Enter your Character's ID: ");
                 System.out.print("or press E to return to main menu ");
                 String id = sc.nextLine().trim();
 
-                if (id.equalsIgnoreCase("e")){
+                if (id.equalsIgnoreCase("e")) {
                     break;
                 }
 
@@ -124,8 +183,13 @@ public class FFCLI {
         }
     }
 
-
-    //allows users to update a specific character by entering the ID and what they want to update
+    /**
+     * Interactive flow to update a character by ID.
+     * <p>
+     * Validates that the character exists, then delegates the actual update
+     * logic to {@link FF#updateCharacterById(String)}, which manages the
+     * update sub-menu.
+     */
     public static void update() {
         ArrayList<PCharacter> characters = ff.getCharacters();
         if (characters.isEmpty()) {
@@ -139,7 +203,7 @@ public class FFCLI {
             System.out.print("Enter character ID or E to exit: ");
             String id = sc.nextLine().trim();
 
-            if(id.equalsIgnoreCase("e")){
+            if (id.equalsIgnoreCase("e")) {
                 break;
             }
             if (!ff.characterExists(id)) {
@@ -153,7 +217,11 @@ public class FFCLI {
 
     }
 
-    //removes character by ID
+    /**
+     * Removes a character by ID after validating it exists.
+     * <p>
+     * The user can also press "E" to exit without removing anything.
+     */
     private static void remove() {
         boolean searching = true;
         if (ff.getCharacters().isEmpty()) {
@@ -162,10 +230,11 @@ public class FFCLI {
 
         }
 
-        while(searching){
-            System.out.print("Enter Character ID to remove or press E to exit: "); String id = sc.nextLine().trim();
+        while (searching) {
+            System.out.print("Enter Character ID to remove or press E to exit: ");
+            String id = sc.nextLine().trim();
 
-            if(id.equalsIgnoreCase("e")){
+            if (id.equalsIgnoreCase("e")) {
                 searching = false;
             }
             if (!ff.characterExists(id)) {
@@ -178,6 +247,14 @@ public class FFCLI {
         }
     }
 
+    /**
+     * Repeatedly prompts the user for a valid level value.
+     * <p>
+     * A valid level is an integer between 1 and 99 (inclusive).
+     *
+     * @param sc the scanner used for input
+     * @return a valid level
+     */
     private static int getValidLevel(Scanner sc) {
         while (true) {
             System.out.print("Level: ");
@@ -191,6 +268,15 @@ public class FFCLI {
         }
     }
 
+    /**
+     * Repeatedly prompts the user for a valid job value.
+     * <p>
+     * Valid jobs are defined by {@link PCharacter#getValidJobs()} and checked
+     * using {@link PCharacter#isValidJob(String)}.
+     *
+     * @param sc the scanner used for input
+     * @return a valid job string
+     */
     private static String getValidJob(Scanner sc) {
         while (true) {
             System.out.print("Job: ");
@@ -204,24 +290,41 @@ public class FFCLI {
         }
     }
 
+    /**
+     * Repeatedly prompts the user for a valid HP value.
+     * <p>
+     * HP must be a positive integer.
+     *
+     * @param sc the scanner used for input
+     * @return a valid HP value
+     */
     private static Integer getValidHP(Scanner sc) {
         while (true) {
             System.out.print("HP: ");
             try {
                 int hp = Integer.parseInt(sc.nextLine().trim());
-                if(hp > 0 ) return hp;
+                if (hp > 0) return hp;
                 else System.out.println("Invalid HP!");
-            }catch (NumberFormatException e) {
-                System.out.println("Invalid HP!");}
+            } catch (NumberFormatException e) {
+                System.out.println("Invalid HP!");
+            }
         }
     }
 
+    /**
+     * Repeatedly prompts the user for a valid MP value.
+     * <p>
+     * MP must be a positive integer.
+     *
+     * @param sc the scanner used for input
+     * @return a valid MP value
+     */
     private static Integer getValidMP(Scanner sc) {
         while (true) {
             System.out.print("MP: ");
             try {
                 int mp = Integer.parseInt(sc.nextLine().trim());
-                if(mp > 0 ) return mp;
+                if (mp > 0) return mp;
                 else System.out.println("Invalid MP!");
             } catch (NumberFormatException e) {
                 System.out.println("Invalid MP!");
@@ -229,6 +332,14 @@ public class FFCLI {
         }
     }
 
+    /**
+     * Repeatedly prompts the user for an "active" flag.
+     * <p>
+     * Accepts only {@code "yes"} or {@code "no"} (case-insensitive).
+     *
+     * @param sc the scanner used for input
+     * @return {@code true} if the user answers yes, {@code false} if no
+     */
     private static boolean getValidActive(Scanner sc) {
         while (true) {
             System.out.print("Is the character in your party? (yes/no): ");
@@ -241,6 +352,14 @@ public class FFCLI {
         }
     }
 
+    /**
+     * Convenience method for debugging a specific character by ID.
+     * <p>
+     * Creates its own {@link PCharacters} instance and prints the character data
+     * directly, using {@link PCharacters#printById(String)}.
+     *
+     * @param id ID of the character to debug-print
+     */
     public static void debugCharacter(String id) {
         PCharacters db = new PCharacters();
         db.printById(id);
