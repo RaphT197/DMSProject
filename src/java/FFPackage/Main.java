@@ -6,7 +6,7 @@ package FFPackage;
  * This class presents a simple console menu to choose between:
  * <ul>
  *     <li>CLI mode ({@link FFCLI})</li>
- *     <li>GUI mode </li>
+ *     <li>GUI mode ({@link FFGUI})</li>
  *     <li>Exiting the application</li>
  * </ul>
  */
