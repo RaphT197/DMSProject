@@ -6,6 +6,7 @@ import javax.swing.*;
 import javax.swing.border.TitledBorder;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
+import java.awt.event.HierarchyEvent;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Random;
@@ -242,6 +243,8 @@ public class FFGUI {
         }
     }
 
+
+
     /**
      * Refreshes the table model with the latest data from the database
      * and updates the random job icon shown in the bottom-right corner.
@@ -292,7 +295,7 @@ public class FFGUI {
             String name = JOptionPane.showInputDialog(frame, "Name:");
             if (name == null || name.trim().isEmpty()) return;
 
-            String job = validJob();
+            String job = jobSelector();
             if (job == null) return;
 
             Integer level = validLevel();
@@ -359,6 +362,40 @@ public class FFGUI {
         } catch (NumberFormatException e) {
             JOptionPane.showMessageDialog(frame, "Invalid number!");
         }
+
+    }
+
+    private String jobSelector() {
+        String [] jobs = PCharacter.getValidJobs().toArray(new String[0]);
+
+        JComboBox<String> jSelect = new JComboBox<>(jobs);
+        jSelect.getModel().setSelectedItem(jobs[0]);
+
+        jSelect.addHierarchyListener(hEv -> {
+            if((hEv.getChangeFlags() & HierarchyEvent.SHOWING_CHANGED) != 0 && jSelect.isShowing()) {
+                JButton ok = SwingUtilities.getRootPane(jSelect).getDefaultButton();
+                ok.setEnabled(jSelect.getSelectedIndex() >= 0);
+                jSelect.addActionListener(aEv -> ok.setEnabled(jSelect.getSelectedIndex() >= 0));
+            }
+        });
+
+        JPanel panel = new JPanel(new GridLayout(0, 1, 0, 8));
+        panel.add(new JLabel("Select desired Job: "));
+        panel.add(jSelect);
+
+        int choice = JOptionPane.showConfirmDialog(frame,
+                panel, "Select your Job", JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
+
+        if (choice == JOptionPane.OK_OPTION) {
+            JOptionPane.showMessageDialog(frame, "Selected job: " + jSelect.getSelectedItem());
+            return jSelect.getSelectedItem().toString();
+        }
+        else {
+             JOptionPane.showMessageDialog(frame, "Cancelled!");
+        }
+
+        //String jobSelect = String.valueOf(choice);
+        return null;
     }
 
     /**
@@ -393,7 +430,7 @@ public class FFGUI {
                     }
                 }
                 case 1 -> {  // Job
-                    String newJob = validJob();
+                    String newJob = jobSelector();
                     if (newJob != null) {
                         ff.updateCharacterJob(id, newJob);
                         refreshTable();
@@ -623,6 +660,8 @@ public class FFGUI {
         characterTable.setOpaque(false);
         ((JComponent) characterTable.getParent()).setOpaque(false);
     }
+
+
 
     /**
      * GUI entry point. Launches the {@link FFGUI} on the Swing event dispatch thread.
