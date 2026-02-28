@@ -30,7 +30,9 @@ public class PCharacters {
      */
     public PCharacters() {
         String projectRoot = System.getProperty("user.dir");
-        String dbPath = projectRoot + File.separator + "ffgame.db";
+        System.out.println("Project Root is: " + projectRoot);
+        String dbPath = projectRoot + File.separator + "src" + File.separator + "main" + File.separator + "ffgame.db";
+        System.out.println("Project Root is: " + dbPath);
         this.CONNECTION_STRING = "jdbc:sqlite:" + dbPath;
         initializeDatabase();
 

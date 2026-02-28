@@ -365,6 +365,11 @@ public class FFGUI {
 
     }
 
+    /**
+     * Creates a dropdown menu instead of prompting the user to type
+     * or guessing what job I decided to include.
+     * @return jSelect with the user's Job.
+     */
     private String jobSelector() {
         String [] jobs = PCharacter.getValidJobs().toArray(new String[0]);
 

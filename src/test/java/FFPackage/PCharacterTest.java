@@ -1,4 +1,4 @@
-package java.FFPackage;
+package FFPackage;
 
 import FFPackage.FF;
 import FFPackage.PCharacter;

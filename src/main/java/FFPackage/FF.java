@@ -228,7 +228,7 @@ public class FF {
                     int level = Integer.parseInt(parts[2].trim());
                     int hp = Integer.parseInt(parts[3].trim());
                     int mp = Integer.parseInt(parts[4].trim());
-                    boolean isActive = Boolean.parseBoolean(parts[5].trim());
+                    boolean isActive = Boolean.parseBoolean(parts[5].trim().toLowerCase());
 
                     // Validate job against allowed values
                     if (!PCharacter.isValidJob(job)) {
