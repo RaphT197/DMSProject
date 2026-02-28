@@ -1,5 +1,5 @@
 # Use Java 21 as base image
-FROM eclipse-temurin:21-jre
+FROM eclipse-temurin:22-jre
 
 # Set working directory inside container
 WORKDIR /app
