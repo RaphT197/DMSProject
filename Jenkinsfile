@@ -29,6 +29,12 @@ pipeline {
                 bat 'mvn package -DskipTests'
             }
         }
+
+        stage('Docker Build') {
+            steps {
+                bat 'docker build -t ffgame:latest .'
+            }
+        }
     }
 
     post {
