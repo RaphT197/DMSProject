@@ -12,7 +12,7 @@ public class PCharactersTest {
 
     private PCharacters db;
 
-    // Real file path only — NOT a jdbc:sqlite: URL
+    //  file path only
     private static final String TEST_DB_PATH =
             System.getProperty("user.dir") + File.separator + "ffgame-test.db";
 
