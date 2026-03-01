@@ -30,12 +30,19 @@ public class PCharacters {
      */
     public PCharacters() {
         String projectRoot = System.getProperty("user.dir");
-        String dbPath = projectRoot + File.separator + "src" + File.separator + "main" + File.separator + "ffgame.db";
-        this.CONNECTION_STRING = "jdbc:sqlite:" + dbPath;
-        initializeDatabase();
 
-        // Optional debug output so it's clear which DB file is being used
-        //System.out.println("Using database: " + dbPath);
+        // Try /app/ffgame.db first (Docker environment)
+        File dbFile = new File(projectRoot + File.separator + "ffgame.db");
+
+        // Fall back to local development path
+        if (!dbFile.exists()) {
+            dbFile = new File(projectRoot + File.separator + "src"
+                    + File.separator + "main"
+                    + File.separator + "ffgame.db");
+        }
+
+        this.CONNECTION_STRING = "jdbc:sqlite:" + dbFile.getAbsolutePath();
+        initializeDatabase();
     }
 
     /**
