@@ -32,7 +32,7 @@ pipeline {
 
         stage('Docker Build') {
             steps {
-                bat 'docker build -t ffgame:latest .'
+                bat 'docker build -it ffgame:latest .'
             }
         }
     }
